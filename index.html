@@ -225,20 +225,53 @@
 
     <hr />
     <section id="C3" class="contact-us">
-      <h2>Contact Us</h2>
-      <p>If you have any questions, feel free to contact us!</p>
+      <h2 style="font-size: 47px; margin-bottom: 20px; margin-top: 0px; color: white;">
+        Contact Us
+      </h2>
+      <p style="font-size: 18px; color: #ccc; margin-bottom: 30px;">
+        If you have any questions, feel free to contact us!
+      </p>
 
-      <form action="submit_form.php" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required />
+      <form action="submit_form.php" method="post" style="max-width: 600px; margin: 0 auto;">
+        <div class="input-group">
+          <label for="name" style="display: block; font-size: 16px; color: white; margin-bottom: 5px;">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px;"
+          />
+        </div>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+        <div class="input-group">
+          <label for="email" style="display: block; font-size: 16px; color: white; margin-bottom: 5px;">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px;"
+          />
+        </div>
 
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" rows="5" required></textarea>
+        <div class="input-group">
+          <label for="message" style="display: block; font-size: 16px; color: white; margin-bottom: 5px;">Message:</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            required
+            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px;"
+          ></textarea>
+        </div>
 
-        <button type="submit">Submit</button>
+        <button
+          type="submit"
+          style="background-color: rgb(232, 0, 0); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
+        >
+          Submit
+        </button>
       </form>
     </section>
   </body>

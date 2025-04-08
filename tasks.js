@@ -3,12 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const addTaskBtn = document.getElementById("addTaskBtn");
   const taskList = document.getElementById("taskList");
 
-  // Function to add a new task
-  addTaskBtn.addEventListener("click", () => {
-    const taskText = taskInput.value.trim();
-    if (!taskText) return;
+  // Load tasks from localStorage
+  const loadTasks = () => {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(taskText => {
+      addTaskToList(taskText);
+    });
+  };
 
-    // Create a list item
+  // Save tasks to localStorage
+  const saveTasks = () => {
+    const tasks = Array.from(taskList.children).map(item => item.querySelector("span").textContent);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  };
+
+  // Function to add a task to the list
+  const addTaskToList = (taskText) => {
     const listItem = document.createElement("li");
 
     const taskTextSpan = document.createElement("span");
@@ -21,12 +31,25 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteBtn.textContent = "Delete";
     deleteBtn.addEventListener("click", () => {
       taskList.removeChild(listItem);
+      saveTasks();
     });
 
     listItem.appendChild(deleteBtn);
     taskList.appendChild(listItem);
+  };
+
+  // Add task button click event
+  addTaskBtn.addEventListener("click", () => {
+    const taskText = taskInput.value.trim();
+    if (!taskText) return;
+
+    addTaskToList(taskText);
+    saveTasks();
 
     // Clear the input
     taskInput.value = "";
   });
+
+  // Load tasks on page load
+  loadTasks();
 });

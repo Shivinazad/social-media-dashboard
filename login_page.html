@@ -12,7 +12,7 @@
       <div class="login-card">
         <h1>Login to "moonbox"</h1>
         <p>Please login to access your dashboard.</p>
-        <form>
+        <form id="loginForm">
           <div class="input-group">
             <label for="email">Email</label>
             <input
@@ -33,17 +33,20 @@
               required
             />
           </div>
-          <button type="submit" class="btn-login">
-            <a style="text-decoration: none; color: white" href="analytics.html"
-              >Login</a
-            >
-          </button>
+          <button type="submit" class="btn-login">Login</button>
         </form>
         <div class="extras">
-          <a href="#">Forgot Password?</a>
-          <p>Don't have an account? <a href="#">Sign Up</a></p>
+          <p>Don't have an account? <a href="signup_page.html">Sign Up</a></p>
         </div>
       </div>
     </div>
+
+    <script>
+      // Handle form submission to redirect to analytics.html
+      document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        window.location.href = "analytics.html"; // Redirect to analytics.html
+      });
+    </script>
   </body>
 </html>

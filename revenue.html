@@ -6,9 +6,10 @@
     <title>Revenue</title>
     <link rel="stylesheet" href="revenue.css" />
     <link rel="icon" href="NEW_FAVICON.png" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <!-- Sidebar already exists -->
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="profile-picture">
         <img
@@ -57,6 +58,8 @@
         >
       </div>
     </div>
+
+    <!-- Revenue Container -->
     <div class="revenue-container">
       <h1 class="revenue-title">Revenue Overview</h1>
 
@@ -76,10 +79,96 @@
         </div>
       </div>
 
-      <!-- Horizontal Graph Box -->
-      <div>
-        <img style="height: 700px; width: 1170px" src="image.png" alt="" />
+      <!-- Dynamic Chart -->
+      <div style="height: 400px; margin-top: 20px">
+        <canvas id="revenueChart"></canvas>
       </div>
     </div>
+
+    <script>
+      // Data for the chart
+      const chartData = {
+        labels: ["January", "February", "March", "April", "May", "June"], // Labels for the months
+        datasets: [
+          {
+            label: "Revenue (in $)",
+            data: [4500, 5000, 4800, 5200, 5300, 5500], // Previous data
+            backgroundColor: function (context) {
+              const gradient = context.chart.ctx.createLinearGradient(
+                0,
+                0,
+                0,
+                400
+              );
+              gradient.addColorStop(0, "rgba(75, 192, 192, 0.8)"); // Top color
+              gradient.addColorStop(1, "rgba(75, 192, 192, 0.2)"); // Bottom color
+              return gradient;
+            },
+            borderColor: "rgba(75, 192, 192, 1)", // Border color for bars
+            borderWidth: 2,
+            borderRadius: 10, // Rounded corners for bars
+            hoverBackgroundColor: "rgba(75, 192, 192, 1)", // Highlight color on hover
+          },
+        ],
+      };
+
+      // Chart configuration
+      const config = {
+        type: "bar", // Bar chart
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // Allow the chart to resize dynamically
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                color: "white", // Legend text color
+                font: {
+                  size: 14,
+                  family: "Verdana, Geneva, Tahoma, sans-serif", // Match page font
+                },
+              },
+            },
+            tooltip: {
+              backgroundColor: "rgba(0, 0, 0, 0.7)", // Tooltip background
+              titleColor: "white", // Tooltip title color
+              bodyColor: "white", // Tooltip body color
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: "white", // X-axis label color
+                font: {
+                  size: 12,
+                  family: "Verdana, Geneva, Tahoma, sans-serif", // Match page font
+                },
+              },
+              grid: {
+                color: "rgba(255, 255, 255, 0.1)", // Light grid lines
+              },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: "white", // Y-axis label color
+                font: {
+                  size: 12,
+                  family: "Verdana, Geneva, Tahoma, sans-serif", // Match page font
+                },
+              },
+              grid: {
+                color: "rgba(255, 255, 255, 0.1)", // Light grid lines
+              },
+            },
+          },
+        },
+      };
+
+      // Render the chart
+      const ctx = document.getElementById("revenueChart").getContext("2d");
+      const revenueChart = new Chart(ctx, config);
+    </script>
   </body>
 </html>

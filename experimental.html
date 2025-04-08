@@ -3,14 +3,193 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
+    <title>Reports</title>
+    <link rel="stylesheet" href="experimental.css" />
+    <link rel="icon" href="NEW_FAVICON.png" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: "Verdana", Geneva, Tahoma, sans-serif;
+        background-color: #1d1b31;
+        color: white;
+        margin: 0;
+        padding: 20px;
+      }
 
+      h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: #ffffff;
+        text-align: center;
+      }
+
+      .metrics {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 40px;
+      }
+
+      .metric-box {
+        background-color: #2a2840;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        width: 30%;
+      }
+
+      .metric-box h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #cccccc;
+      }
+
+      .metric-box p {
+        font-size: 36px;
+        color: #ff3366;
+      }
+
+      .chart-container {
+        margin: 40px auto;
+        width: 60%; /* Adjusted width for smaller chart */
+        background-color: #2a2840;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .recent-reports {
+        margin: 40px auto;
+        width: 80%;
+        background-color: #2a2840;
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #444;
+      }
+
+      th {
+        color: #ff3366;
+      }
+
+      tr:hover {
+        background-color: #333;
+      }
+    </style>
+  </head>
   <body>
-    <div style="margin-left: 440px; margin-top: 30px">
-      <video width="620px" height="540px" autoplay loop muted>
-        <source src="under (2).mp4" type="video/mp4" />
-      </video>
+    <!-- Sidebar -->
+
+    <!-- Reports Container -->
+    <div class="reports-container">
+      <h1>Reports Dashboard</h1>
+
+      <!-- Key Metrics -->
+      <div class="metrics">
+        <div class="metric-box">
+          <h2>Total Reports</h2>
+          <p>120</p>
+        </div>
+        <div class="metric-box">
+          <h2>Pending Reports</h2>
+          <p>15</p>
+        </div>
+        <div class="metric-box">
+          <h2>Completed Reports</h2>
+          <p>105</p>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <canvas id="reportsChart"></canvas>
+      </div>
+
+      <!-- Recent Reports Table -->
+      <div class="recent-reports">
+        <h2>Recent Reports</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Report Name</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Social Media Performance</td>
+              <td>April 1, 2025</td>
+              <td style="color: green">Completed</td>
+            </tr>
+            <tr>
+              <td>Monthly Engagement</td>
+              <td>March 28, 2025</td>
+              <td style="color: red">Pending</td>
+            </tr>
+            <tr>
+              <td>Ad Campaign Analysis</td>
+              <td>March 25, 2025</td>
+              <td style="color: green">Completed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
+    <script>
+      // Data for the chart
+      const chartData = {
+        labels: ["Completed", "Pending"], // Labels for the chart
+        datasets: [
+          {
+            label: "Reports Status",
+            data: [105, 15], // Data for completed and pending reports
+            backgroundColor: [
+              "rgba(75, 192, 192, 0.8)",
+              "rgba(255, 99, 132, 0.8)",
+            ],
+            borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      // Chart configuration
+      const config = {
+        type: "pie", // Pie chart
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // Ensure the chart fits the container
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                color: "white", // Legend text color
+                font: {
+                  size: 14,
+                  family: "Verdana, Geneva, Tahoma, sans-serif", // Match page font
+                },
+              },
+            },
+          },
+        },
+      };
+
+      // Render the chart
+      const ctx = document.getElementById("reportsChart").getContext("2d");
+      const reportsChart = new Chart(ctx, config);
+    </script>
   </body>
 </html>
