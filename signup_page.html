@@ -6,13 +6,61 @@
     <title>Sign Up</title>
     <link rel="stylesheet" href="signup_page.css" />
     <link rel="icon" href="NEW_FAVICON.png" />
+    <style>
+      /* Cool and aesthetic loading screen styles */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e1e2e, #3a3a5e);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .loading-overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .loader {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ff6f61, #ff9a8b);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite ease-in-out;
+        box-shadow: 0 0 20px rgba(255, 111, 97, 0.6),
+          0 0 40px rgba(255, 111, 97, 0.4);
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="login-wrapper">
       <div class="login-card">
         <h1>Sign Up for "moonbox"</h1>
         <p>Create an account to access your dashboard.</p>
-        <form>
+        <form id="signupForm">
           <div class="input-group">
             <label for="name">Full Name</label>
             <input
@@ -50,5 +98,88 @@
         </div>
       </div>
     </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loader"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const loadingOverlay = document.getElementById("loadingOverlay");
+
+          try {
+            // Show the loading animation
+            loadingOverlay.classList.add("active");
+
+            const response = await fetch("http://localhost:3000/signup", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name, email, password }),
+            });
+
+            if (response.ok) {
+              // Simulate a smooth transition delay
+              setTimeout(() => {
+                window.location.href = "analytics.html";
+              }, 1000); // 1-second delay for smoothness
+            } else {
+              const errorData = await response.json();
+              alert(errorData.message || "Signup failed");
+              loadingOverlay.classList.remove("active"); // Hide loader on error
+            }
+          } catch (error) {
+            console.error("Error during signup:", error);
+            alert("An error occurred. Please try again.");
+            loadingOverlay.classList.remove("active"); // Hide loader on error
+          }
+        });
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const loadingOverlay = document.getElementById("loadingOverlay");
+
+          try {
+            // Show the loading bar
+            loadingOverlay.classList.add("active");
+
+            const response = await fetch("http://localhost:3000/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+              // Simulate a smooth transition delay
+              setTimeout(() => {
+                window.location.href = "analytics.html";
+              }, 1000); // 1-second delay for smoothness
+            } else {
+              const errorData = await response.json();
+              alert(errorData.message || "Login failed");
+              loadingOverlay.classList.remove("active"); // Hide loader on error
+            }
+          } catch (error) {
+            console.error("Error during login:", error);
+            alert("An error occurred. Please try again.");
+            loadingOverlay.classList.remove("active"); // Hide loader on error
+          }
+        });
+    </script>
   </body>
 </html>

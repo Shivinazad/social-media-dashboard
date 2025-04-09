@@ -41,7 +41,7 @@
           font-family: Verdana, Geneva, Tahoma, sans-serif;
         "
       >
-        <b>Andrew Smith</b><br />
+        <b>User00987</b><br />
       </div>
       <div class="sidebar-element" style="color: rgb(174, 169, 172)">
         Overview
@@ -123,5 +123,93 @@
         <div style="font-size: 38px; color: red">low</div>
       </div>
     </div>
+    <script>
+      const express = require("express");
+      const cors = require("cors");
+
+      const app = express();
+      const PORT = 3000;
+
+      // Middleware
+      app.use(cors());
+      app.use(express.json());
+
+      // Mock Analytics Data
+      const analyticsData = {
+        balance: 4500,
+        facebookShares: 10,
+        instagramFollowers: 27,
+        linkedInViews: 50,
+        engagementRate: 3.75,
+        conversion: "low",
+        analyticsSummary: [
+          "Could do better",
+          "Instagram is still the same",
+          "Marketing budget ++",
+          "Conversion is low",
+        ],
+      };
+
+      // Analytics Endpoint
+      app.get("/analytics", (req, res) => {
+        res.json(analyticsData);
+      });
+
+      // Start Server
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          // Fetch analytics data from the backend
+          const response = await fetch("http://localhost:3000/analytics");
+          const data = await response.json();
+
+          // Update the Balance
+          document.querySelector(
+            ".balance div"
+          ).textContent = `$${data.balance}`;
+
+          // Update Facebook Shares
+          document.querySelector(
+            ".withdrawals div"
+          ).textContent = `${data.facebookShares}%`;
+
+          // Update Instagram Followers
+          document.querySelector(
+            ".incomes div"
+          ).textContent = `${data.instagramFollowers}%`;
+
+          // Update LinkedIn Views
+          document.querySelector(
+            ".profits div"
+          ).textContent = `${data.linkedInViews}%`;
+
+          // Update Engagement Rate
+          document.querySelector(
+            ".growth div"
+          ).textContent = `${data.engagementRate}`;
+
+          // Update Conversion
+          document.querySelector(
+            ".stats div"
+          ).textContent = `${data.conversion}`;
+
+          // Update Analytics Summary
+          const summaryBox = document.querySelector(".analytics");
+          summaryBox.innerHTML = `
+            <div>Analytics Summary:</div>
+            <hr />
+            ${data.analyticsSummary
+              .map((item) => `<div>${item}</div><br />`)
+              .join("")}
+          `;
+        } catch (error) {
+          console.error("Error fetching analytics data:", error);
+        }
+      });
+    </script>
   </body>
 </html>

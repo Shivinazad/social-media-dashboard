@@ -2,10 +2,61 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=width=device-width, initial-scale=1.0"
+    />
     <title>Login</title>
     <link rel="stylesheet" href="login_page.css" />
     <link rel="icon" href="NEW_FAVICON.png" />
+    <style>
+      /* Cool and aesthetic loading screen styles */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e1e2e, #3a3a5e);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .loading-overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .loader {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ff6f61, #ff9a8b);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite ease-in-out;
+        box-shadow: 0 0 20px rgba(255, 111, 97, 0.6),
+          0 0 40px rgba(255, 111, 97, 0.4);
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="login-wrapper">
@@ -41,12 +92,48 @@
       </div>
     </div>
 
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loader"></div>
+    </div>
+
     <script>
-      // Handle form submission to redirect to analytics.html
-      document.getElementById("loginForm").addEventListener("submit", (e) => {
-        e.preventDefault(); // Prevent the default form submission
-        window.location.href = "analytics.html"; // Redirect to analytics.html
-      });
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const loadingOverlay = document.getElementById("loadingOverlay");
+
+          try {
+            // Show the loading animation
+            loadingOverlay.classList.add("active");
+
+            const response = await fetch("http://localhost:3000/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+              // Simulate a smooth transition delay
+              setTimeout(() => {
+                window.location.href = "analytics.html";
+              }, 1000); // 1-second delay for smoothness
+            } else {
+              const errorData = await response.json();
+              alert(errorData.message || "Login failed");
+              loadingOverlay.classList.remove("active"); // Hide loader on error
+            }
+          } catch (error) {
+            console.error("Error during login:", error);
+            alert("An error occurred. Please try again.");
+            loadingOverlay.classList.remove("active"); // Hide loader on error
+          }
+        });
     </script>
   </body>
 </html>
