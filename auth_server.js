@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001; // Change this to 3001
 
 // Middleware
 app.use(cors());
@@ -33,14 +33,14 @@ const User = mongoose.model("User", userSchema);
 app.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
 
-  try {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
-    // Save the user to the database
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
-
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     if (error.code === 11000) {

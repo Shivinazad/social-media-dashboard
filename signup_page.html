@@ -118,7 +118,7 @@
             // Show the loading animation
             loadingOverlay.classList.add("active");
 
-            const response = await fetch("http://localhost:3000/signup", {
+            const response = await fetch("http://localhost:3001/signup", { // Change to 3001
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

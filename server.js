@@ -34,7 +34,7 @@ const Analytics = mongoose.model("Analytics", analyticsSchema);
 // Analytics Endpoint
 app.get("/analytics", async (req, res) => {
   try {
-    const analyticsData = await Analytics.findOne();
+    const analyticsData = await Analytics.findOne(); // Fetch the first document
     if (!analyticsData) {
       return res.status(404).json({ message: "No analytics data found" });
     }

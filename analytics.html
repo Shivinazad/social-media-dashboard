@@ -167,6 +167,8 @@
           const response = await fetch("http://localhost:3000/analytics");
           const data = await response.json();
 
+          console.log(data); // Debugging: Check the data in the browser console
+
           // Update the Balance
           document.querySelector(
             ".balance div"
