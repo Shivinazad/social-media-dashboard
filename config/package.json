@@ -13,7 +13,7 @@
     "start": "node server.js",
     "auth": "node auth_server.js",
     "seed": "node seed.js",
-    "dev": "concurrently \"node server.js\" \"node auth_server.js\" \"node seed.js\""
+    "dev": "concurrently \"node d:/social-media-dashboard/js/server.js\" \"node d:/social-media-dashboard/js/auth_server.js\" \"node d:/social-media-dashboard/js/seed.js\""
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tasks</title>
+    <link rel="stylesheet" href="../css/tasks.css" />
+
+    <link rel="icon" href="../assets/icons/NEW_FAVICON.png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body style="background-color: #1e1e2e; height: 100vh; position: relative">
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <div class="sidebar">
+      <div class="profile-picture">
+        <img
+          style="
+            height: 100px;
+            border-radius: 100%;
+            width: 100px;
+            margin-top: 100px;
+            object-fit: cover;
+          "
+          src="../assets/profile_pictures/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg"
+          alt="Profile Picture"
+        />
+      </div>
+      <div
+        style="
+          margin-top: 20px;
+          margin-bottom: 50px;
+          color: white;
+          font-family: Verdana, Geneva, Tahoma, sans-serif;
+          font-size: 16px;
+        "
+      >
+        <b>User00987</b><br />
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="analytics.html"
+          >Overview</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="experimental.html"
+          >Reports</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="tasks.html"
+          >Tasks</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="revenue.html"
+          >Revenue</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="settings.html"
+          >Settings</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <button
+          id="logoutBtn"
+          style="background: none; border: none; color: white; cursor: pointer"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+    <div class="navbar">
+      <p style="padding-left: 570px; padding-top: 125px">To-Do</p>
+    </div>
+
+    <div class="main-content">
+      <div class="tasks-container">
+        <!-- Task Input -->
+        <div class="task-input">
+          <input
+            type="text"
+            id="taskInput"
+            placeholder="Add a new task..."
+            class="form-control"
+          />
+          <button id="addTaskBtn" class="btn">Add Task</button>
+        </div>
+
+        <!-- Task List -->
+        <div class="task-list">
+          <ul id="taskList">
+            <!-- Dynamic Task Items -->
+          </ul>
+        </div>
+      </div>
+    </div>
+    #hi
+    <script src="../js/tasks.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+
+        if (!userId) {
+          console.error("User ID not found in query parameters");
+          return;
+        }
+
+        try {
+          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          const userName = userData.name;
+
+          // Update the sidebar with the user's name
+          document.querySelector(".profile-picture + div b").textContent =
+            userName;
+
+          // Update all sidebar links to include the userId
+          document.querySelectorAll(".sidebar-element a").forEach((link) => {
+            const href = new URL(link.href);
+            href.searchParams.set("userId", userId);
+            link.href = href.toString();
+          });
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        window.location.href = "login_page.html"; // Redirect to login page
+      });
+    </script>
+  </body>
+</html>

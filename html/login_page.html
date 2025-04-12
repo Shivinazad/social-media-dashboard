@@ -2,10 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="signup_page.css" />
-    <link rel="icon" href="NEW_FAVICON.png" />
+    <meta
+      name="viewport"
+      content="width=width=device-width, initial-scale=1.0"
+    />
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/login_page.css" />
+
+    <link rel="icon" href="../assets/NEW_FAVICON.png" />
     <style>
       /* Cool and aesthetic loading screen styles */
       .loading-overlay {
@@ -58,19 +62,9 @@
   <body>
     <div class="login-wrapper">
       <div class="login-card">
-        <h1>Sign Up for "moonbox"</h1>
-        <p>Create an account to access your dashboard.</p>
-        <form id="signupForm">
-          <div class="input-group">
-            <label for="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
+        <h1>Login to "moonbox"</h1>
+        <p>Please login to access your dashboard.</p>
+        <form id="loginForm">
           <div class="input-group">
             <label for="email">Email</label>
             <input
@@ -87,14 +81,14 @@
               type="password"
               id="password"
               name="password"
-              placeholder="Create a password"
+              placeholder="Enter your password"
               required
             />
           </div>
-          <button type="submit" class="btn-login">Sign Up</button>
+          <button type="submit" class="btn-login">Login</button>
         </form>
         <div class="extras">
-          <p>Already have an account? <a href="login_page.html">Login</a></p>
+          <p>Don't have an account? <a href="signup_page.html">Sign Up</a></p>
         </div>
       </div>
     </div>
@@ -103,46 +97,8 @@
       <div class="loader"></div>
     </div>
 
+    <script src="../js/auth_server.js"></script>
     <script>
-      document
-        .getElementById("signupForm")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent the default form submission
-
-          const name = document.getElementById("name").value;
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
-          const loadingOverlay = document.getElementById("loadingOverlay");
-
-          try {
-            // Show the loading animation
-            loadingOverlay.classList.add("active");
-
-            const response = await fetch("http://localhost:3001/signup", { // Change to 3001
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ name, email, password }),
-            });
-
-            if (response.ok) {
-              // Simulate a smooth transition delay
-              setTimeout(() => {
-                window.location.href = "analytics.html";
-              }, 1000); // 1-second delay for smoothness
-            } else {
-              const errorData = await response.json();
-              alert(errorData.message || "Signup failed");
-              loadingOverlay.classList.remove("active"); // Hide loader on error
-            }
-          } catch (error) {
-            console.error("Error during signup:", error);
-            alert("An error occurred. Please try again.");
-            loadingOverlay.classList.remove("active"); // Hide loader on error
-          }
-        });
-
       document
         .getElementById("loginForm")
         .addEventListener("submit", async function (event) {
@@ -153,10 +109,10 @@
           const loadingOverlay = document.getElementById("loadingOverlay");
 
           try {
-            // Show the loading bar
+            // Show the loading animation
             loadingOverlay.classList.add("active");
 
-            const response = await fetch("http://localhost:3000/login", {
+            const response = await fetch("http://localhost:3001/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -165,10 +121,9 @@
             });
 
             if (response.ok) {
-              // Simulate a smooth transition delay
-              setTimeout(() => {
-                window.location.href = "analytics.html";
-              }, 1000); // 1-second delay for smoothness
+              const data = await response.json();
+              const userId = data.userId; // Get the user ID from the response
+              window.location.href = `analytics.html?userId=${userId}`; // Pass userId as a query parameter
             } else {
               const errorData = await response.json();
               alert(errorData.message || "Login failed");

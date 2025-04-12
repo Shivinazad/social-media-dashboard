@@ -1,0 +1,181 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 100vh;
+  background-color: #ff3366;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 23px;
+  position: fixed;
+}
+
+.sidebar-element {
+  display: block;
+  margin-bottom: 15px;
+  color: white;
+  cursor: pointer;
+}
+
+.sidebar-element:nth-child(1) {
+  background-color: aliceblue;
+}
+
+.profile-picture {
+  border-radius: 100px;
+}
+
+.navbar {
+  position: absolute;
+  left: 280px;
+  height: 70px;
+  width: 1230px;
+  /* background-color: rgba(8, 16, 23, 0.171); */
+  color: #ffd1dc;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+/* Main content area for tasks */
+.main-content {
+  margin-left: 300px;
+  padding: 20px;
+  height: 100vh;
+  background-color: #1e1e2e;
+  color: #ffffff;
+  margin-top: 100px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #ffd1dc;
+}
+
+/* Task Container */
+.tasks-container {
+  background-color: #2a2a3b;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.task-input {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.task-input .form-control {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: white;
+}
+
+.task-input .form-control::placeholder {
+  color: #999999;
+}
+
+.task-input .btn {
+  background-color: #ff3366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.task-input .btn:hover {
+  background-color: #e52e5c;
+}
+
+/* Task List */
+.task-list {
+  margin-top: 20px;
+}
+
+.task-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.task-list li {
+  background-color: #333333;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease;
+}
+
+.task-list li .delete-btn {
+  background-color: #ff3366;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.task-list li .delete-btn:hover {
+  background-color: #e52e5c;
+}
+
+/* Microinteractions for Tasks Page */
+
+/* Button Hover and Click Effects */
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Task List Animations */
+.task-list li.removing {
+  animation: fadeOut 0.5s ease;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

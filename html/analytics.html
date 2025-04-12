@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics</title>
+    <link rel="stylesheet" href="../css/analytics.css" />
+
+    <link rel="icon" href="NEW_FAVICON.png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js"></script>
+    <style>
+      .box.last-synced {
+        display: flex; /* Use flexbox for alignment */
+        flex-direction: column; /* Stack the label and value */
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        padding: 20px; /* Add padding for spacing */
+        text-align: center; /* Center-align text */
+        white-space: nowrap; /* Prevent text wrapping */
+      }
+
+      #lastSynced {
+        font-size: 18px;
+        color: white;
+        margin-top: 10px; /* Add spacing between label and value */
+      }
+
+      .bento-grid .box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .last-synced-text {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 12px; /* Smaller font size */
+        color: white; /* White color for the text */
+      }
+      .last-synced-time {
+        color: grey; /* Grey color for 'x minutes ago' */
+      }
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e1e2e, #3a3a5e);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .loading-overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .loader {
+        width: 100px; /* Increased size */
+        height: 100px; /* Increased size */
+        background: linear-gradient(135deg, #ff6f61, #ff9a8b);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite ease-in-out;
+        box-shadow: 0 0 20px rgba(255, 111, 97, 0.6),
+          0 0 40px rgba(255, 111, 97, 0.4);
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body style="background-color: #1d1b31; height: 100vh; position: relative">
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <div class="sidebar">
+      <div class="profile-picture">
+        <img
+          style="
+            height: 100px;
+            border-radius: 100%;
+            width: 100px;
+            margin-top: 100px;
+            object-fit: cover;
+          "
+          src="../assets/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg"
+          alt="Profile Picture"
+        />
+      </div>
+      <div
+        style="
+          margin-top: 20px;
+          margin-bottom: 50px;
+          color: white;
+          font-family: Verdana, Geneva, Tahoma, sans-serif;
+          font-size: 16px;
+        "
+      >
+        <b>User00987</b><br />
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="analytics.html"
+          >Overview</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="experimental.html"
+          >Reports</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="tasks.html"
+          >Tasks</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="revenue.html"
+          >Revenue</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <a style="text-decoration: none; color: white" href="settings.html"
+          >Settings</a
+        >
+      </div>
+      <div class="sidebar-element">
+        <button
+          id="logoutBtn"
+          style="background: none; border: none; color: white; cursor: pointer"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+    <div class="navbar">
+      <p
+        style="
+          padding-left: 28px;
+          padding-top: 5px;
+          /* font-family: 'Courier New', Courier, monospace; */
+        "
+      >
+        <!-- moonbox Analytics -->
+        Hello, Welcome!!
+      </p>
+    </div>
+    <div class="bento-grid">
+      <div class="box balance" style="display: block; padding-top: 90px">
+        Balance :
+        <div id="balance" style="color: green; font-size: 38px">$0</div>
+      </div>
+      <div class="box withdrawals" style="display: block; padding-top: 50px">
+        Facebook Shares :
+        <div id="facebookShares" style="font-size: 38px; color: red">0%</div>
+      </div>
+      <div class="box incomes" style="display: block; padding-top: 50px">
+        Instagram Followers :
+        <div id="instagramFollowers" style="font-size: 38px">0%</div>
+      </div>
+      <div class="box profits" style="display: block; padding-top: 90px">
+        LinkedIn Views:
+        <div id="linkedInViews" style="font-size: 38px; color: green">0%</div>
+      </div>
+      <div class="box chart" style="font-size: 70px">OVERVIEW</div>
+      <div class="box analytics" style="display: block; padding-top: 50px">
+        Analytics Summary :
+        <hr />
+        <div>Could do better</div>
+        <br />
+        <!-- <hr /> -->
+        <div>Instagram is still same</div>
+        <br />
+        <!-- <hr /> -->
+        <div>marketing budgdet ++</div>
+        <br />
+        <!-- <hr /> -->
+        <div>Conversion is low</div>
+        <br />
+        <!-- <hr /> -->
+        <div>Could do better</div>
+      </div>
+      <div class="box growth" style="display: block; padding-top: 50px">
+        Engagement rate
+        <div id="engagementRate" style="font-size: 38px">0</div>
+      </div>
+      <div class="box stats" style="display: block; padding-top: 50px">
+        Conversion :
+        <div id="conversion" style="font-size: 38px; color: red">low</div>
+      </div>
+    </div>
+    <div class="last-synced-text" id="lastSynced">
+      Last Synced: <span class="last-synced-time">Just now</span>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loader"></div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Get the userId from the query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+
+        if (!userId) {
+          console.error("User ID not found in query parameters");
+          window.location.href = "login_page.html"; // Redirect to login if no userId
+          return;
+        }
+
+        try {
+          // Fetch the user's name from the backend
+          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          const userName = userData.name;
+
+          // Update the UI with the user's name
+          document.querySelector(".profile-picture + div b").textContent =
+            userName;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Get the userId from the query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+
+        if (!userId) {
+          console.error("User ID not found in query parameters");
+          return;
+        }
+
+        try {
+          // Fetch the user's name from the backend
+          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          const userName = userData.name;
+
+          // Update the UI with the user's name
+          document.querySelector(".profile-picture + div b").textContent =
+            userName;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+
+        try {
+          const response = await fetch("http://localhost:3000/analytics");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log("Fetched data:", data);
+
+          // Update Balance
+          document.getElementById("balance").textContent = `$${data.balance}`;
+
+          // Update Facebook Shares
+          document.getElementById(
+            "facebookShares"
+          ).textContent = `${data.facebookShares}%`;
+
+          // Update Instagram Followers
+          document.getElementById(
+            "instagramFollowers"
+          ).textContent = `${data.instagramFollowers}%`;
+
+          // Update LinkedIn Views
+          document.getElementById(
+            "linkedInViews"
+          ).textContent = `${data.linkedInViews}%`;
+
+          // Update Engagement Rate
+          document.getElementById("engagementRate").textContent =
+            data.engagementRate;
+
+          // Update Conversion
+          document.getElementById("conversion").textContent = data.conversion;
+
+          // Update Last Synced
+          const lastSyncedTime = new Date(data.timestamp); // Timestamp from backend
+          const now = new Date(); // Current time
+          const minutesAgo = Math.floor((now - lastSyncedTime) / 60000); // Difference in minutes
+          const lastSyncedElement = document.getElementById("lastSynced");
+          lastSyncedElement.innerHTML = `Last Synced: <span class="last-synced-time">${minutesAgo} minutes ago</span>`;
+        } catch (error) {
+          console.error("Error fetching analytics data:", error);
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+
+        if (!userId) {
+          console.error("User ID not found in query parameters");
+          return;
+        }
+
+        try {
+          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          const userName = userData.name;
+
+          // Update the sidebar with the user's name
+          document.querySelector(".profile-picture + div b").textContent =
+            userName;
+
+          // Update all sidebar links to include the userId
+          document.querySelectorAll(".sidebar-element a").forEach((link) => {
+            const href = new URL(link.href);
+            href.searchParams.set("userId", userId);
+            link.href = href.toString();
+          });
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        window.location.href = "login_page.html"; // Redirect to login page
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.classList.add("active"); // Show the loading screen
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+
+        if (!userId) {
+          console.error("User ID not found in query parameters");
+          window.location.href = "login_page.html"; // Redirect to login if no userId
+          return;
+        }
+
+        try {
+          // Fetch the user's name from the backend
+          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          const userName = userData.name;
+
+          // Update the UI with the user's name
+          document.querySelector(".profile-picture + div b").textContent =
+            userName;
+
+          // Fetch analytics data
+          const analyticsResponse = await fetch(
+            "http://localhost:3000/analytics"
+          );
+          if (!analyticsResponse.ok) {
+            throw new Error("Failed to fetch analytics data");
+          }
+
+          const analyticsData = await analyticsResponse.json();
+          document.getElementById(
+            "balance"
+          ).textContent = `$${analyticsData.balance}`;
+          document.getElementById(
+            "facebookShares"
+          ).textContent = `${analyticsData.facebookShares}%`;
+          document.getElementById(
+            "instagramFollowers"
+          ).textContent = `${analyticsData.instagramFollowers}%`;
+          document.getElementById(
+            "linkedInViews"
+          ).textContent = `${analyticsData.linkedInViews}%`;
+          document.getElementById("engagementRate").textContent =
+            analyticsData.engagementRate;
+          document.getElementById("conversion").textContent =
+            analyticsData.conversion;
+
+          // Simulate a smooth transition delay (same as login/signup)
+          setTimeout(() => {
+            loadingOverlay.classList.remove("active"); // Hide the loading screen
+          }, 1000); // 1-second delay for smoothness
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          loadingOverlay.classList.remove("active"); // Hide the loading screen on error
+        }
+      });
+    </script>
+    <script src="../js/server.js"></script>
+  </body>
+</html>

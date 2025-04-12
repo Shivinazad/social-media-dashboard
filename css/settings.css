@@ -1,0 +1,164 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 100vh;
+  background-color: #ff3366;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 23px;
+  position: fixed;
+}
+
+.sidebar-element {
+  display: block;
+  margin-bottom: 15px;
+  color: white;
+  cursor: pointer;
+}
+
+.sidebar-element:nth-child(1) {
+  background-color: aliceblue;
+}
+
+.profile-picture {
+  border-radius: 100px;
+}
+
+.navbar {
+  position: absolute;
+  left: 280px;
+  height: 70px;
+  width: 1230px;
+  background-color: rgba(8, 16, 23, 0.171);
+  color: #ffd1dc;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+/* Main layout for the Bento Grid */
+/* General Settings */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #1d1b31;
+  color: #ffffff;
+}
+
+.settings-container {
+  margin-left: 280px; /* Sidebar width */
+  padding: 20px;
+}
+
+.settings-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffd1dc;
+  margin-bottom: 20px;
+}
+
+.settings-section {
+  background-color: #1e1e2e;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd1dc;
+  margin-bottom: 15px;
+}
+
+.settings-item {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-item label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+}
+
+.settings-item input,
+.settings-item select {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #2a2a3b;
+  color: #ffffff;
+  width: 60%;
+}
+
+.settings-item input[type="checkbox"] {
+  width: auto;
+}
+
+.settings-item input[type="file"] {
+  color: #ffffff;
+}
+
+.save-button {
+  padding: 10px 20px;
+  background-color: #ff3366;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-button:hover {
+  background-color: #ff6699;
+}
+
+/* Microinteractions for Settings Page */
+
+/* Button Hover and Click Effects */
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Focus Effects */
+input:focus {
+  border-color: #0071e3;
+  box-shadow: 0 0 5px rgba(0, 113, 227, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .settings-item label {
+    margin-bottom: 5px;
+  }
+
+  .settings-item input,
+  .settings-item select {
+    width: 100%;
+  }
+}
