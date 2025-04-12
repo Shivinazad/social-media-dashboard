@@ -217,3 +217,117 @@ button:active {
 .loading-overlay.inactive {
   opacity: 0;
 }
+
+/* Live Feed Styles */
+.live-feed-container {
+  position: absolute;
+  top: 90px; 
+  left: 330px; 
+  width: 300px;
+  height: 500px;
+  background-color: #1e1e2e;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 1000;
+  cursor: move; /* Indicates element is draggable */
+  user-select: none; /* Prevents text selection while dragging */
+}
+
+.live-feed-header {
+  padding: 15px;
+  background-color: #2a2840;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: move; /* Makes it clear the header is the drag handle */
+}
+
+.live-feed-container.dragging {
+  opacity: 0.8;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.live-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  margin-right: 5px;
+  animation: pulse 2s infinite;
+}
+
+.live-feed-content {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.feed-item {
+  background-color: #2a2840;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+.feed-item.new {
+  background-color: #313150;
+}
+
+.platform-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.platform-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.platform-name {
+  font-weight: bold;
+  color: #ffd1dc;
+}
+
+.feed-message {
+  color: #fff;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.feed-time {
+  color: #888;
+  font-size: 12px;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar for the feed */
+.live-feed-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.live-feed-content::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+.live-feed-content::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+.live-feed-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
