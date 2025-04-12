@@ -152,7 +152,29 @@
           <button class="save-button">Save Changes</button>
         </div>
       </div>
+
+      <!-- Notification Settings Section -->
+      <div class="settings-section">
+        <h2 class="section-title">Notification Settings</h2>
+        <div class="settings-item">
+          <label for="engagementNotifs">Engagement Updates:</label>
+          <input type="checkbox" id="engagementNotifs" checked />
+        </div>
+        <div class="settings-item">
+          <label for="mentionNotifs">Mentions:</label>
+          <input type="checkbox" id="mentionNotifs" checked />
+        </div>
+        <div class="settings-item">
+          <label for="syncNotifs">Sync Status:</label>
+          <input type="checkbox" id="syncNotifs" checked />
+        </div>
+        <div class="settings-item">
+          <label for="performanceNotifs">Performance Alerts:</label>
+          <input type="checkbox" id="performanceNotifs" checked />
+        </div>
+      </div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -190,6 +212,57 @@
       document.getElementById("logoutBtn").addEventListener("click", () => {
         window.location.href = "login_page.html"; // Redirect to login page
       });
+
+      // Save notification preferences to localStorage
+      function saveNotificationPreferences() {
+        const preferences = {
+          engagement: document.getElementById("engagementNotifs").checked,
+          mentions: document.getElementById("mentionNotifs").checked,
+          sync: document.getElementById("syncNotifs").checked,
+          performance: document.getElementById("performanceNotifs").checked,
+        };
+        localStorage.setItem(
+          "notificationPreferences",
+          JSON.stringify(preferences)
+        );
+      }
+
+      // Load notification preferences from localStorage
+      function loadNotificationPreferences() {
+        const savedPreferences = localStorage.getItem(
+          "notificationPreferences"
+        );
+        if (savedPreferences) {
+          const preferences = JSON.parse(savedPreferences);
+          document.getElementById("engagementNotifs").checked =
+            preferences.engagement;
+          document.getElementById("mentionNotifs").checked =
+            preferences.mentions;
+          document.getElementById("syncNotifs").checked = preferences.sync;
+          document.getElementById("performanceNotifs").checked =
+            preferences.performance;
+        }
+      }
+
+      // Add event listeners to checkboxes
+      document
+        .getElementById("engagementNotifs")
+        .addEventListener("change", saveNotificationPreferences);
+      document
+        .getElementById("mentionNotifs")
+        .addEventListener("change", saveNotificationPreferences);
+      document
+        .getElementById("syncNotifs")
+        .addEventListener("change", saveNotificationPreferences);
+      document
+        .getElementById("performanceNotifs")
+        .addEventListener("change", saveNotificationPreferences);
+
+      // Load preferences when page loads
+      document.addEventListener(
+        "DOMContentLoaded",
+        loadNotificationPreferences
+      );
     </script>
     <script src="../js/server.js"></script>
   </body>

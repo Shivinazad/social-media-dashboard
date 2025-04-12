@@ -8,6 +8,7 @@
   font-family: Arial, Helvetica, sans-serif;
   font-size: 23px;
   position: fixed;
+  z-index: 1001; /* Ensure sidebar stays on top */
 }
 
 .sidebar-element {
@@ -27,20 +28,32 @@
 
 .navbar {
   position: absolute;
-  left: 280px;
+  left: 0;
   height: 70px;
-  width: 1230px;
+  width: calc(1200px + 320px + 40px + 280px); /* Width includes sidebar */
   background-color: rgba(8, 16, 23, 0.171);
   color: #ffd1dc;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 900;
+}
+
+.navbar-content {
+  margin-left: 308px;
+  padding-top: 17px;
+  white-space: nowrap;
+  z-index: 900;
 }
 
 /* Main layout for the Bento Grid */
 .bento-grid {
   position: absolute;
   left: 300px;
+  top: 88px; /* Position below navbar */
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 20px;
@@ -220,28 +233,32 @@ button:active {
 
 /* Live Feed Styles */
 .live-feed-container {
-  position: absolute;
-  top: 90px; 
-  left: 330px; 
+  position: absolute; /* Changed from fixed to absolute */
+  top: 90px;
+  left: calc(300px + 1200px + 20px); /* Position after dashboard */
   width: 300px;
   height: 500px;
   background-color: #1e1e2e;
+  border: 1px solid #333; /* Added border for visibility */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
   overflow: hidden;
   z-index: 1000;
-  cursor: move; /* Indicates element is draggable */
-  user-select: none; /* Prevents text selection while dragging */
+  cursor: move;
+  user-select: none;
+  color: #fff; /* Ensure text is visible */
 }
 
 .live-feed-header {
   padding: 15px;
   background-color: #2a2840;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #444; /* Lighter border */
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: move; /* Makes it clear the header is the drag handle */
+  cursor: move;
+  color: #ffd1dc; /* Match theme color */
+  font-weight: bold;
 }
 
 .live-feed-container.dragging {
@@ -262,21 +279,24 @@ button:active {
 .live-feed-content {
   height: calc(100% - 50px);
   overflow-y: auto;
-  padding: 10px;
+  padding: 15px;
+  background-color: #1e1e2e; /* Ensure background is visible */
 }
 
 .feed-item {
   background-color: #2a2840;
-  margin-bottom: 10px;
-  padding: 12px;
+  margin-bottom: 12px;
+  padding: 15px;
   border-radius: 6px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s forwards;
+  border: 1px solid #333; /* Added border */
+  opacity: 1; /* Set initial opacity to 1 */
+  transform: none; /* Remove initial transform */
+  transition: background-color 0.3s ease;
 }
 
 .feed-item.new {
   background-color: #313150;
+  border-left: 3px solid #ff3366; /* Highlight new items */
 }
 
 .platform-info {
@@ -298,8 +318,9 @@ button:active {
 
 .feed-message {
   color: #fff;
-  margin: 5px 0;
+  margin: 8px 0;
   font-size: 14px;
+  line-height: 1.4;
 }
 
 .feed-time {
@@ -330,4 +351,279 @@ button:active {
 
 .live-feed-content::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Notification System Styles */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  z-index: 1100;
+}
+
+.notification {
+  background-color: #1e1e2e;
+  color: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.notification.success {
+  border-left: 4px solid #4caf50;
+}
+
+.notification.warning {
+  border-left: 4px solid #ff9800;
+}
+
+.notification.error {
+  border-left: 4px solid #f44336;
+}
+
+.notification.info {
+  border-left: 4px solid #2196f3;
+}
+
+.notification-content {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.notification-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #ffd1dc;
+}
+
+.notification-message {
+  font-size: 14px;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+}
+
+.notification-close:hover {
+  color: white;
+}
+
+.notification-settings {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background-color: #1e1e2e;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1099;
+}
+
+.notification-settings h3 {
+  color: #ffd1dc;
+  margin-bottom: 10px;
+}
+
+.notification-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.notification-toggle label {
+  margin-left: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.notification-toggle input[type="checkbox"] {
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.notification.removing {
+  animation: slideOut 0.5s forwards;
+}
+
+/* Notification Bell Styles */
+.notification-bell {
+  position: relative;
+  margin-left: auto; /* Push to right side */
+  margin-right: 30px;
+  cursor: pointer;
+  font-size: 24px;
+  color: #ffd1dc;
+  z-index: 1000; /* Keep above sidebar */
+}
+
+.notification-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff3366;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Last Synced Container */
+.last-synced-container {
+  position: absolute;
+  top: 610px; /* Position below live feed (90px + 500px + 20px spacing) */
+  left: calc(300px + 1200px + 20px); /* Same left position as live feed */
+  background-color: #1e1e2e;
+  padding: 30px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #ffd1dc;
+  font-size: 14px;
+  z-index: 1000;
+  width: 300px; /* Same width as live feed */
+}
+
+.last-synced-time {
+  color: #999;
+  margin-left: 5px;
+}
+
+/* Notification Panel Styles */
+.notification-panel {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  background-color: #1e1e2e;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1200;
+  display: none;
+  overflow: hidden;
+}
+
+.notification-panel.show {
+  display: block;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.notification-header h3 {
+  margin: 0;
+  color: #ffd1dc;
+  font-size: 18px;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.clear-all:hover {
+  color: #ffd1dc;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Custom scrollbar for notification panel */
+.notification-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-container::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+.notification-container::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+.notification-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Make main content scrollable horizontally */
+body {
+  overflow-x: auto;
+  min-width: calc(
+    300px + 1200px + 320px + 40px
+  ); /* sidebar + grid + feed + spacing */
+  max-width: none;
+  position: relative;
+  background-color: #121212;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style scrollbar for better visibility */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Ensure bento grid stays in place */
+.bento-grid {
+  position: absolute;
+  left: 300px;
+  width: 1200px;
+  /* ... existing bento-grid properties ... */
 }

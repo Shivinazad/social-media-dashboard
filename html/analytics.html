@@ -95,6 +95,11 @@
         }
       }
     </style>
+    <!-- Add Font Awesome for the bell icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body style="background-color: #1d1b31; height: 100vh; position: relative">
     <script
@@ -162,17 +167,28 @@
       </div>
     </div>
     <div class="navbar">
-      <p
-        style="
-          padding-left: 28px;
-          padding-top: 5px;
-          /* font-family: 'Courier New', Courier, monospace; */
-        "
-      >
-        <!-- moonbox Analytics -->
-        Hello, Welcome!!
-      </p>
+      <div class="navbar-content">Hello, Welcome!!</div>
+      <div style="margin-left: auto; padding-right: 30px">
+        <div class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <span class="notification-count">0</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Update notification panel position to be relative to navbar -->
+    <div
+      class="notification-panel"
+      id="notificationPanel"
+      style="position: absolute; left: calc(100% - 370px)"
+    >
+      <div class="notification-header">
+        <h3>Notifications</h3>
+        <button class="clear-all">Clear All</button>
+      </div>
+      <div class="notification-container" id="notificationContainer"></div>
+    </div>
+
     <div class="bento-grid">
       <div class="box balance" style="display: block; padding-top: 90px">
         Balance :
@@ -217,9 +233,14 @@
         <div id="conversion" style="font-size: 38px; color: red">low</div>
       </div>
     </div>
-    <div class="last-synced-text" id="lastSynced">
-      Last Synced: <span class="last-synced-time">Just now</span>
+
+    <!-- Move Last Synced to bottom -->
+    <div class="last-synced-container">
+      <div class="last-synced-text" id="lastSynced">
+        Last Synced: <span class="last-synced-time">Just now</span>
+      </div>
     </div>
+
     <div class="loading-overlay" id="loadingOverlay">
       <div class="loader"></div>
     </div>
@@ -235,82 +256,105 @@
     </div>
 
     <script>
-      // Dragging functionality
-      document.addEventListener("DOMContentLoaded", () => {
-        const liveFeed = document.querySelector(".live-feed-container");
-        const header = document.querySelector(".live-feed-header");
-        let isDragging = false;
-        let currentX;
-        let currentY;
-        let initialX;
-        let initialY;
-        let xOffset = 0;
-        let yOffset = 0;
+      // Removed dragging functionality since feed now scrolls with dashboard
 
-        function dragStart(e) {
-          if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-          } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-          }
+      // Mock data for social media updates
+      const mockUpdates = {
+        linkedin: [
+          "New connection request from John Doe, CEO at Tech Corp",
+          "Your post about AI trends received 50+ likes",
+          "5 people viewed your profile today",
+          "Upcoming tech conference in your network",
+          "Your job posting reached 100 views",
+        ],
+        facebook: [
+          "Your page gained 10 new followers",
+          "Recent post shared 15 times",
+          "New comment on your business update",
+          "Event reminder: Digital Marketing Workshop",
+          "Page engagement up 25% this week",
+        ],
+        instagram: [
+          "Your story was viewed by 200 people",
+          "New comment on your latest post",
+          "5 people saved your recent post",
+          "Trending hashtag in your niche",
+          "Direct message from potential collaborator",
+        ],
+      };
 
-          if (e.target === header || e.target.parentNode === header) {
-            isDragging = true;
-            liveFeed.classList.add("dragging");
-          }
+      // Platform icons using emoji (can be replaced with actual icons)
+      const platformIcons = {
+        linkedin: "💼",
+        facebook: "👥",
+        instagram: "📸",
+      };
+
+      // Function to create a new feed item
+      function createFeedItem(platform, message) {
+        const item = document.createElement("div");
+        item.className = "feed-item";
+
+        const now = new Date();
+        const timeString = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        item.innerHTML = `
+        <div class="platform-info">
+            <span class="platform-icon">${platformIcons[platform]}</span>
+            <span class="platform-name">${
+              platform.charAt(0).toUpperCase() + platform.slice(1)
+            }</span>
+        </div>
+        <div class="feed-message">${message}</div>
+        <div class="feed-time">${timeString}</div>
+    `;
+
+        return item;
+      }
+
+      // Function to add a new update to the feed
+      function addUpdate() {
+        const platforms = ["linkedin", "facebook", "instagram"];
+        const platform =
+          platforms[Math.floor(Math.random() * platforms.length)];
+        const messages = mockUpdates[platform];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+
+        const feedContent = document.getElementById("liveFeedContent");
+        const newItem = createFeedItem(platform, message);
+
+        // Add new class for highlight animation
+        newItem.classList.add("new");
+
+        // Add to the top of the feed
+        if (feedContent.firstChild) {
+          feedContent.insertBefore(newItem, feedContent.firstChild);
+        } else {
+          feedContent.appendChild(newItem);
         }
 
-        function dragEnd() {
-          isDragging = false;
-          liveFeed.classList.remove("dragging");
-          // Save the final position
-          xOffset = currentX;
-          yOffset = currentY;
+        // Remove highlight class after animation
+        setTimeout(() => {
+          newItem.classList.remove("new");
+        }, 3000);
+
+        // Keep only the last 10 items
+        const items = feedContent.getElementsByClassName("feed-item");
+        if (items.length > 10) {
+          feedContent.removeChild(items[items.length - 1]);
         }
+      }
 
-        function drag(e) {
-          if (isDragging) {
-            e.preventDefault();
+      // Add initial updates
+      for (let i = 0; i < 3; i++) {
+        addUpdate();
+      }
 
-            if (e.type === "touchmove") {
-              currentX = e.touches[0].clientX - initialX;
-              currentY = e.touches[0].clientY - initialY;
-            } else {
-              currentX = e.clientX - initialX;
-              currentY = e.clientY - initialY;
-            }
-
-            // Keep the feed within the viewport
-            const rect = liveFeed.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-
-            if (currentX < -rect.width / 2) currentX = -rect.width / 2;
-            if (currentY < 0) currentY = 0;
-            if (currentX > viewportWidth - rect.width / 2)
-              currentX = viewportWidth - rect.width / 2;
-            if (currentY > viewportHeight - rect.height)
-              currentY = viewportHeight - rect.height;
-
-            xOffset = currentX;
-            yOffset = currentY;
-
-            liveFeed.style.transform = `translate(${currentX}px, ${currentY}px)`;
-          }
-        }
-
-        // Mouse events
-        header.addEventListener("mousedown", dragStart);
-        document.addEventListener("mousemove", drag);
-        document.addEventListener("mouseup", dragEnd);
-
-        // Touch events for mobile
-        header.addEventListener("touchstart", dragStart);
-        document.addEventListener("touchmove", drag);
-        document.addEventListener("touchend", dragEnd);
-      });
+      // Add new updates every 12 seconds
+      setInterval(addUpdate, 12000);
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
@@ -516,105 +560,211 @@
         }
       });
     </script>
+    <script src="../js/server.js"></script>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <script>
-      // Mock data for social media updates
-      const mockUpdates = {
-        linkedin: [
-          "New connection request from John Doe, CEO at Tech Corp",
-          "Your post about AI trends received 50+ likes",
-          "5 people viewed your profile today",
-          "Upcoming tech conference in your network",
-          "Your job posting reached 100 views",
+      // Notification System
+      const notifications = {
+        engagement: [
+          {
+            title: "Engagement Update",
+            message: "Your post engagement increased by 15%",
+            type: "success",
+          },
+          {
+            title: "Engagement Alert",
+            message: "Facebook page impressions dropped suddenly",
+            type: "warning",
+          },
         ],
-        facebook: [
-          "Your page gained 10 new followers",
-          "Recent post shared 15 times",
-          "New comment on your business update",
-          "Event reminder: Digital Marketing Workshop",
-          "Page engagement up 25% this week",
+        mentions: [
+          {
+            title: "New Mention",
+            message: "You've been mentioned in a comment",
+            type: "info",
+          },
+          {
+            title: "New Interaction",
+            message: "New comment received on LinkedIn",
+            type: "info",
+          },
         ],
-        instagram: [
-          "Your story was viewed by 200 people",
-          "New comment on your latest post",
-          "5 people saved your recent post",
-          "Trending hashtag in your niche",
-          "Direct message from potential collaborator",
+        sync: [
+          {
+            title: "Sync Status",
+            message: "Sync completed successfully",
+            type: "success",
+          },
+          {
+            title: "Sync Alert",
+            message: "Last sync completed with warnings",
+            type: "warning",
+          },
+        ],
+        performance: [
+          {
+            title: "Performance Alert",
+            message: "Unusual spike in page views detected",
+            type: "info",
+          },
+          {
+            title: "Performance Update",
+            message: "Weekly engagement goals achieved",
+            type: "success",
+          },
         ],
       };
 
-      // Platform icons using emoji (can be replaced with actual icons)
-      const platformIcons = {
-        linkedin: "💼",
-        facebook: "👥",
-        instagram: "📸",
-      };
+      function getNotificationPreferences() {
+        const savedPreferences = localStorage.getItem(
+          "notificationPreferences"
+        );
+        if (savedPreferences) {
+          return JSON.parse(savedPreferences);
+        }
+        return {
+          engagement: true,
+          mentions: true,
+          sync: true,
+          performance: true,
+        };
+      }
 
-      // Function to create a new feed item
-      function createFeedItem(platform, message) {
-        const item = document.createElement("div");
-        item.className = "feed-item";
+      function createNotification(title, message, type = "info") {
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close">&times;</button>
+        `;
 
-        const now = new Date();
-        const timeString = now.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
+        const closeBtn = notification.querySelector(".notification-close");
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeNotification(notification);
         });
 
-        item.innerHTML = `
-        <div class="platform-info">
-            <span class="platform-icon">${platformIcons[platform]}</span>
-            <span class="platform-name">${
-              platform.charAt(0).toUpperCase() + platform.slice(1)
-            }</span>
-        </div>
-        <div class="feed-message">${message}</div>
-        <div class="feed-time">${timeString}</div>
-    `;
+        // Update notification count
+        const countElement = document.querySelector(".notification-count");
+        countElement.textContent = parseInt(countElement.textContent) + 1;
 
-        return item;
+        return notification;
       }
 
-      // Function to add a new update to the feed
-      function addUpdate() {
-        const platforms = ["linkedin", "facebook", "instagram"];
-        const platform =
-          platforms[Math.floor(Math.random() * platforms.length)];
-        const messages = mockUpdates[platform];
-        const message = messages[Math.floor(Math.random() * messages.length)];
-
-        const feedContent = document.getElementById("liveFeedContent");
-        const newItem = createFeedItem(platform, message);
-
-        // Add new class for highlight animation
-        newItem.classList.add("new");
-
-        // Add to the top of the feed
-        if (feedContent.firstChild) {
-          feedContent.insertBefore(newItem, feedContent.firstChild);
-        } else {
-          feedContent.appendChild(newItem);
-        }
-
-        // Remove highlight class after animation
+      function removeNotification(notification) {
+        notification.classList.add("removing");
         setTimeout(() => {
-          newItem.classList.remove("new");
-        }, 3000);
-
-        // Keep only the last 10 items
-        const items = feedContent.getElementsByClassName("feed-item");
-        if (items.length > 10) {
-          feedContent.removeChild(items[items.length - 1]);
-        }
+          if (notification.parentElement) {
+            notification.parentElement.removeChild(notification);
+            // Update notification count
+            const countElement = document.querySelector(".notification-count");
+            const currentCount = parseInt(countElement.textContent);
+            if (currentCount > 0) {
+              countElement.textContent = currentCount - 1;
+            }
+          }
+        }, 500);
       }
 
-      // Add initial updates
-      for (let i = 0; i < 3; i++) {
-        addUpdate();
+      function showRandomNotification() {
+        const preferences = getNotificationPreferences();
+        const enabledTypes = Object.entries(preferences)
+          .filter(([, enabled]) => enabled)
+          .map(([type]) => type);
+
+        if (enabledTypes.length === 0) return;
+
+        const randomType =
+          enabledTypes[Math.floor(Math.random() * enabledTypes.length)];
+        const notificationsOfType = notifications[randomType];
+        const randomNotification =
+          notificationsOfType[
+            Math.floor(Math.random() * notificationsOfType.length)
+          ];
+
+        const notification = createNotification(
+          randomNotification.title,
+          randomNotification.message,
+          randomNotification.type
+        );
+
+        const container = document.getElementById("notificationContainer");
+        container.appendChild(notification);
       }
 
-      // Add new updates every 12 seconds
-      setInterval(addUpdate, 12000);
+      function scheduleNextNotification() {
+        const delay = Math.random() * (30000 - 20000) + 20000; // Random delay between 20-30 seconds
+        setTimeout(() => {
+          showRandomNotification();
+          scheduleNextNotification();
+        }, delay);
+      }
+
+      // Start the notification system
+      scheduleNextNotification();
     </script>
-    <script src="../js/server.js"></script>
+
+    <script>
+      // Add click handler for notification bell
+      document
+        .querySelector(".notification-bell")
+        .addEventListener("click", function (e) {
+          e.stopPropagation();
+          const panel = document.getElementById("notificationPanel");
+          panel.classList.toggle("show");
+        });
+
+      // Close panel when clicking outside
+      document.addEventListener("click", function (e) {
+        const panel = document.getElementById("notificationPanel");
+        if (
+          !panel.contains(e.target) &&
+          !e.target.closest(".notification-bell")
+        ) {
+          panel.classList.remove("show");
+        }
+      });
+
+      // Add clear all functionality
+      document
+        .querySelector(".clear-all")
+        .addEventListener("click", function () {
+          const container = document.getElementById("notificationContainer");
+          while (container.firstChild) {
+            removeNotification(container.firstChild);
+          }
+          document.querySelector(".notification-count").textContent = "0";
+        });
+
+      // Update notification creation to not auto-remove
+      function createNotification(title, message, type = "info") {
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close">&times;</button>
+        `;
+
+        const closeBtn = notification.querySelector(".notification-close");
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeNotification(notification);
+        });
+
+        // Update notification count
+        const countElement = document.querySelector(".notification-count");
+        countElement.textContent = parseInt(countElement.textContent) + 1;
+
+        return notification;
+      }
+    </script>
   </body>
 </html>
