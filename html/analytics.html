@@ -168,19 +168,15 @@
     </div>
     <div class="navbar">
       <div class="navbar-content">Hello, Welcome!!</div>
-      <div style="margin-left: auto; padding-right: 30px">
-        <div class="notification-bell">
-          <i class="fas fa-bell"></i>
-          <span class="notification-count">0</span>
-        </div>
+      <div class="notification-bell">
+        <i class="fas fa-bell"></i>
+        <span class="notification-count">0</span>
       </div>
     </div>
 
-    <!-- Update notification panel position to be relative to navbar -->
     <div
       class="notification-panel"
       id="notificationPanel"
-      style="position: absolute; left: calc(100% - 370px)"
     >
       <div class="notification-header">
         <h3>Notifications</h3>
@@ -617,58 +613,73 @@
         ],
       };
 
-      function getNotificationPreferences() {
-        const savedPreferences = localStorage.getItem(
-          "notificationPreferences"
-        );
-        if (savedPreferences) {
-          return JSON.parse(savedPreferences);
-        }
-        return {
-          engagement: true,
-          mentions: true,
-          sync: true,
-          performance: true,
-        };
+      function getStoredNotifications() {
+        const stored = localStorage.getItem("dashboardNotifications");
+        return stored ? JSON.parse(stored) : [];
       }
 
-      function createNotification(title, message, type = "info") {
-        const notification = document.createElement("div");
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-          <div class="notification-content">
-            <div class="notification-title">${title}</div>
-            <div class="notification-message">${message}</div>
-          </div>
-          <button class="notification-close">&times;</button>
-        `;
-
-        const closeBtn = notification.querySelector(".notification-close");
-        closeBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          removeNotification(notification);
+      function storeNotification(notification) {
+        const stored = getStoredNotifications();
+        stored.unshift({
+          ...notification,
+          timestamp: new Date().toISOString(),
         });
-
-        // Update notification count
-        const countElement = document.querySelector(".notification-count");
-        countElement.textContent = parseInt(countElement.textContent) + 1;
-
-        return notification;
+        // Keep only last 50 notifications
+        if (stored.length > 50) stored.pop();
+        localStorage.setItem("dashboardNotifications", JSON.stringify(stored));
+        updateNotificationCount();
       }
 
-      function removeNotification(notification) {
-        notification.classList.add("removing");
-        setTimeout(() => {
-          if (notification.parentElement) {
-            notification.parentElement.removeChild(notification);
-            // Update notification count
-            const countElement = document.querySelector(".notification-count");
-            const currentCount = parseInt(countElement.textContent);
-            if (currentCount > 0) {
-              countElement.textContent = currentCount - 1;
-            }
-          }
-        }, 500);
+      function updateNotificationCount() {
+        const stored = getStoredNotifications();
+        const countElement = document.querySelector(".notification-count");
+        countElement.textContent = stored.length;
+      }
+
+      function displayStoredNotifications() {
+        const container = document.getElementById("notificationContainer");
+        container.innerHTML = "";
+        const stored = getStoredNotifications();
+
+        if (stored.length === 0) {
+          container.innerHTML =
+            '<div class="no-notifications">No notifications</div>';
+          return;
+        }
+
+        stored.forEach((notification) => {
+          const element = document.createElement("div");
+          element.className = `notification ${notification.type}`;
+          element.innerHTML = `
+            <div class="notification-content">
+              <div class="notification-title">${notification.title}</div>
+              <div class="notification-message">${notification.message}</div>
+              <div class="notification-time">${new Date(
+                notification.timestamp
+              ).toLocaleTimeString()}</div>
+            </div>
+            <button class="notification-close">&times;</button>
+          `;
+
+          const closeBtn = element.querySelector(".notification-close");
+          closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            removeNotification(notification.timestamp);
+          });
+
+          container.appendChild(element);
+        });
+      }
+
+      function removeNotification(timestamp) {
+        const stored = getStoredNotifications();
+        const filtered = stored.filter((n) => n.timestamp !== timestamp);
+        localStorage.setItem(
+          "dashboardNotifications",
+          JSON.stringify(filtered)
+        );
+        updateNotificationCount();
+        displayStoredNotifications();
       }
 
       function showRandomNotification() {
@@ -687,39 +698,91 @@
             Math.floor(Math.random() * notificationsOfType.length)
           ];
 
-        const notification = createNotification(
-          randomNotification.title,
-          randomNotification.message,
-          randomNotification.type
-        );
+        const notification = {
+          title: randomNotification.title,
+          message: randomNotification.message,
+          type: randomNotification.type,
+          timestamp: new Date().toISOString(),
+        };
 
-        const container = document.getElementById("notificationContainer");
-        container.appendChild(notification);
+        // Store the notification first
+        storeNotification(notification);
+
+        // Create and show the notification popup
+        showNotificationPopup(notification);
+
+        // Update the dropdown if it's open
+        if (
+          document
+            .getElementById("notificationPanel")
+            .classList.contains("show")
+        ) {
+          displayStoredNotifications();
+        }
       }
 
-      function scheduleNextNotification() {
-        const delay = Math.random() * (30000 - 20000) + 20000; // Random delay between 20-30 seconds
+      function showNotificationPopup(notification) {
+        const popup = document.createElement("div");
+        popup.className = `notification ${notification.type}`;
+        popup.innerHTML = `
+          <div class="notification-content">
+            <div class="notification-title">${notification.title}</div>
+            <div class="notification-message">${notification.message}</div>
+          </div>
+          <button class="notification-close">&times;</button>
+        `;
+
+        const container = document.querySelector(".notification-container");
+        container.appendChild(popup);
+
+        const closeBtn = popup.querySelector(".notification-close");
+        closeBtn.addEventListener("click", () => {
+          popup.classList.add("removing");
+          setTimeout(() => popup.remove(), 500);
+        });
+
+        // Auto remove popup after 5 seconds
         setTimeout(() => {
-          showRandomNotification();
-          scheduleNextNotification();
-        }, delay);
+          if (popup.parentElement) {
+            popup.classList.add("removing");
+            setTimeout(() => popup.remove(), 500);
+          }
+        }, 5000);
       }
 
-      // Start the notification system
-      scheduleNextNotification();
-    </script>
+      function getNotificationPreferences() {
+        const savedPreferences = localStorage.getItem(
+          "notificationPreferences"
+        );
+        return savedPreferences
+          ? JSON.parse(savedPreferences)
+          : {
+              engagement: true,
+              mentions: true,
+              sync: true,
+              performance: true,
+            };
+      }
 
-    <script>
-      // Add click handler for notification bell
+      // Initialize notification system
+      document.addEventListener("DOMContentLoaded", () => {
+        // Clear stored notifications on page refresh
+        localStorage.removeItem("dashboardNotifications");
+        updateNotificationCount();
+        displayStoredNotifications();
+        scheduleNextNotification();
+      });
+
+      // Event Listeners
       document
         .querySelector(".notification-bell")
         .addEventListener("click", function (e) {
           e.stopPropagation();
           const panel = document.getElementById("notificationPanel");
           panel.classList.toggle("show");
+          displayStoredNotifications();
         });
 
-      // Close panel when clicking outside
       document.addEventListener("click", function (e) {
         const panel = document.getElementById("notificationPanel");
         if (
@@ -730,40 +793,20 @@
         }
       });
 
-      // Add clear all functionality
       document
         .querySelector(".clear-all")
         .addEventListener("click", function () {
-          const container = document.getElementById("notificationContainer");
-          while (container.firstChild) {
-            removeNotification(container.firstChild);
-          }
-          document.querySelector(".notification-count").textContent = "0";
+          localStorage.setItem("dashboardNotifications", JSON.stringify([]));
+          updateNotificationCount();
+          displayStoredNotifications();
         });
 
-      // Update notification creation to not auto-remove
-      function createNotification(title, message, type = "info") {
-        const notification = document.createElement("div");
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-          <div class="notification-content">
-            <div class="notification-title">${title}</div>
-            <div class="notification-message">${message}</div>
-          </div>
-          <button class="notification-close">&times;</button>
-        `;
-
-        const closeBtn = notification.querySelector(".notification-close");
-        closeBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          removeNotification(notification);
-        });
-
-        // Update notification count
-        const countElement = document.querySelector(".notification-count");
-        countElement.textContent = parseInt(countElement.textContent) + 1;
-
-        return notification;
+      function scheduleNextNotification() {
+        const delay = Math.random() * (30000 - 20000) + 20000; // Random delay between 20-30 seconds
+        setTimeout(() => {
+          showRandomNotification();
+          scheduleNextNotification();
+        }, delay);
       }
     </script>
   </body>
