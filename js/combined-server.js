@@ -1,4 +1,4 @@
-require("dotenv").config();
+ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Add support for proxy in production
 app.set("trust proxy", 1);
@@ -16,39 +16,47 @@ app.set("trust proxy", 1);
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// Serve static files from the root directory
 app.use(express.static(path.join(__dirname, "../")));
-
-// Root route should serve index.html
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../html/index.html"));
-});
-
-// Serve HTML files for all other routes
-app.get("*", (req, res, next) => {
-  const path_parts = req.path.split("/");
-  const last_part = path_parts[path_parts.length - 1];
-
-  // If it's an API call or static file, let it pass through
-  if (last_part.includes(".") || req.path.startsWith("/api/")) {
-    return next();
-  }
-
-  // Otherwise serve index.html
-  res.sendFile(path.join(__dirname, "../html/index.html"));
-});
 
 // MongoDB Connection
 const MONGODB_URI =
   process.env.NODE_ENV === "production"
     ? process.env.MONGODB_URI
-    : "mongodb://127.0.0.1:27017/authDB";
+    : "mongodb://127.0.0.1:27017/dashboard";
 
 mongoose
   .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// Define Schemas and Models
+const analyticsSchema = new mongoose.Schema({
+  balance: Number,
+  facebookShares: Number,
+  instagramFollowers: Number,
+  linkedInViews: Number,
+  engagementRate: Number,
+  conversion: String,
+  analyticsSummary: [String],
+  timestamp: { type: Date, default: Date.now },
+});
+
+const Analytics = mongoose.model("Analytics", analyticsSchema);
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+});
+
+const User = mongoose.model("User", userSchema);
+
+const taskSchema = new mongoose.Schema({
+  description: String,
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Task = mongoose.model("Task", taskSchema);
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -59,25 +67,25 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Verify email configuration
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error("Email configuration error:", error);
-  } else {
-    console.log("Server is ready to send emails");
+// Root route should serve index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
+// Analytics Routes
+app.get("/analytics", async (req, res) => {
+  try {
+    const latestData = await Analytics.findOne().sort({ timestamp: -1 });
+    if (!latestData) {
+      return res.status(404).json({ message: "No analytics data found" });
+    }
+    res.json(latestData);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching analytics data", error });
   }
 });
 
-// User Schema
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-});
-
-const User = mongoose.model("User", userSchema);
-
-// Signup Route
+// Auth Routes
 app.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -99,7 +107,6 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Login Route
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -114,16 +121,16 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // Return the user's name and a session token
-    res
-      .status(200)
-      .json({ message: "Login successful", name: user.name, userId: user._id });
+    res.status(200).json({
+      message: "Login successful",
+      name: user.name,
+      userId: user._id,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error });
   }
 });
 
-// Get User Data by ID
 app.get("/user/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -132,10 +139,49 @@ app.get("/user/:id", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.status(200).json({ name: user.name });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user data", error });
+  }
+});
+
+// Task Routes
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching tasks", error });
+  }
+});
+
+app.post("/tasks", async (req, res) => {
+  const { description } = req.body;
+
+  if (!description) {
+    return res.status(400).json({ message: "Task description is required" });
+  }
+
+  try {
+    const newTask = new Task({ description });
+    await newTask.save();
+    res.status(201).json({ message: "Task added successfully", task: newTask });
+  } catch (error) {
+    res.status(500).json({ message: "Error adding task", error });
+  }
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedTask = await Task.findByIdAndDelete(id);
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting task", error });
   }
 });
 
@@ -148,14 +194,10 @@ app.post("/contact", async (req, res) => {
   }
 
   const mailOptions = {
-    from: process.env.GMAIL_USER, // Changed from email to your Gmail
-    to: process.env.GMAIL_USER, // Your Gmail address from env
+    from: process.env.GMAIL_USER,
+    to: process.env.GMAIL_USER,
     subject: `New Contact Form Message from ${name}`,
-    text: `
-Name: ${name}
-Email: ${email}
-Message: ${message}
-    `,
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     html: `
       <h3>New Contact Form Message</h3>
       <p><strong>Name:</strong> ${name}</p>
@@ -166,16 +208,9 @@ Message: ${message}
   };
 
   try {
-    console.log("Attempting to send email...");
     await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully");
     res.status(200).json({ message: "Message sent successfully" });
   } catch (error) {
-    console.error("Error details:", {
-      message: error.message,
-      code: error.code,
-      response: error.response,
-    });
     res.status(500).json({
       message: "Error sending message",
       details: error.message,
@@ -183,7 +218,21 @@ Message: ${message}
   }
 });
 
+// Handle all other routes to serve the corresponding HTML file
+app.get("*", (req, res, next) => {
+  const path_parts = req.path.split("/");
+  const last_part = path_parts[path_parts.length - 1];
+
+  // If it's an API call or static file, let it pass through
+  if (last_part.includes(".") || req.path.startsWith("/api/")) {
+    return next();
+  }
+
+  // Otherwise serve index.html
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

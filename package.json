@@ -18,13 +18,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "node js/server.js",
-    "auth": "node js/auth_server.js",
-    "seed": "node js/seed.js",
+    "start": "node js/combined-server.js",
     "dev": "concurrently \"node js/server.js\" \"node js/auth_server.js\" \"node js/seed.js\"",
-    "prod": "cross-env NODE_ENV=production concurrently \"node js/server.js\" \"node js/auth_server.js\"",
-    "build": "echo 'No build step needed'",
-    "railway": "concurrently \"node js/server.js\" \"node js/auth_server.js\""
+    "build": "echo 'No build step needed'"
   },
   "repository": {
     "type": "git",

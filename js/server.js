@@ -7,10 +7,34 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Add support for proxy in production
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the root directory
 app.use(express.static(path.join(__dirname, "../")));
+
+// Root route should serve index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
+// Handle all routes to serve the corresponding HTML file
+app.get("*", (req, res, next) => {
+  const path_parts = req.path.split("/");
+  const last_part = path_parts[path_parts.length - 1];
+
+  // If it's an API call, let it pass through
+  if (last_part.includes(".") || req.path.startsWith("/api/")) {
+    return next();
+  }
+
+  // Otherwise serve index.html
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
 
 // MongoDB Connection
 const MONGODB_URI =
