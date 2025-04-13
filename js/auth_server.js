@@ -1,24 +1,28 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const path = require("path");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.AUTH_PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "../")));
 
 // MongoDB Connection
+const MONGODB_URI =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGODB_URI
+    : "mongodb://127.0.0.1:27017/authDB";
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/authDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -32,11 +36,11 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verify email configuration
-transporter.verify(function(error, success) {
+transporter.verify(function (error, success) {
   if (error) {
-    console.error('Email configuration error:', error);
+    console.error("Email configuration error:", error);
   } else {
-    console.log('Server is ready to send emails');
+    console.log("Server is ready to send emails");
   }
 });
 
@@ -116,12 +120,12 @@ app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   const mailOptions = {
     from: process.env.GMAIL_USER, // Changed from email to your Gmail
-    to: process.env.GMAIL_USER,   // Your Gmail address from env
+    to: process.env.GMAIL_USER, // Your Gmail address from env
     subject: `New Contact Form Message from ${name}`,
     text: `
 Name: ${name}
@@ -134,23 +138,23 @@ Message: ${message}
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Message:</strong></p>
       <p>${message}</p>
-    `
+    `,
   };
 
   try {
-    console.log('Attempting to send email...');
+    console.log("Attempting to send email...");
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
-    res.status(200).json({ message: 'Message sent successfully' });
+    console.log("Email sent successfully");
+    res.status(200).json({ message: "Message sent successfully" });
   } catch (error) {
-    console.error('Error details:', {
+    console.error("Error details:", {
       message: error.message,
       code: error.code,
-      response: error.response
+      response: error.response,
     });
-    res.status(500).json({ 
-      message: 'Error sending message',
-      details: error.message 
+    res.status(500).json({
+      message: "Error sending message",
+      details: error.message,
     });
   }
 });
