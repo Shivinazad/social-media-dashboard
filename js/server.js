@@ -1,20 +1,49 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// Add support for proxy in production
+app.set("trust proxy", 1);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname, "../")));
+
+// Root route should serve index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
+// Handle all routes to serve the corresponding HTML file
+app.get("*", (req, res, next) => {
+  const path_parts = req.path.split("/");
+  const last_part = path_parts[path_parts.length - 1];
+
+  // If it's an API call, let it pass through
+  if (last_part.includes(".") || req.path.startsWith("/api/")) {
+    return next();
+  }
+
+  // Otherwise serve index.html
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
 // MongoDB Connection
+const MONGODB_URI =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGODB_URI
+    : "mongodb://127.0.0.1:27017/analyticsDB";
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/analyticsDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 

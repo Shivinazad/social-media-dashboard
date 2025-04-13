@@ -3,19 +3,24 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.13.2",
-    "nodemailer": "^6.10.1"
+    "nodemailer": "^6.10.1",
+    "path": "^0.12.7",
+    "concurrently": "^9.1.2"
   },
   "name": "social-media-dashboard",
   "version": "1.0.0",
-  "main": "auth_server.js",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "node server.js",
-    "auth": "node auth_server.js",
-    "seed": "node seed.js",
-    "dev": "concurrently \"node d:/social-media-dashboard/js/server.js\" \"node d:/social-media-dashboard/js/auth_server.js\" \"node d:/social-media-dashboard/js/seed.js\""
+    "start": "node js/combined-server.js",
+    "dev": "concurrently \"node js/server.js\" \"node js/auth_server.js\" \"node js/seed.js\"",
+    "build": "echo 'No build step needed'"
   },
   "repository": {
     "type": "git",
