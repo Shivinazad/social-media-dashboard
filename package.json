@@ -3,8 +3,10 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "nodemailer": "^6.10.1"
   },
   "name": "social-media-dashboard",
   "version": "1.0.0",
@@ -26,8 +28,8 @@
     "url": "https://github.com/Shivinazad/social-media-dashboard/issues"
   },
   "homepage": "https://github.com/Shivinazad/social-media-dashboard#readme",
-  "description": "",
   "devDependencies": {
     "concurrently": "^9.1.2"
-  }
+  },
+  "description": ""
 }

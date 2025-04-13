@@ -1,11 +1,13 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = 3001; // Change this to 3001
+const PORT = 3001;
 
 // Middleware
 app.use(cors());
@@ -19,6 +21,24 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// Configure email transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
+
+// Verify email configuration
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Email configuration error:', error);
+  } else {
+    console.log('Server is ready to send emails');
+  }
+});
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -88,6 +108,50 @@ app.get("/user/:id", async (req, res) => {
     res.status(200).json({ name: user.name });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user data", error });
+  }
+});
+
+// Contact form endpoint
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const mailOptions = {
+    from: process.env.GMAIL_USER, // Changed from email to your Gmail
+    to: process.env.GMAIL_USER,   // Your Gmail address from env
+    subject: `New Contact Form Message from ${name}`,
+    text: `
+Name: ${name}
+Email: ${email}
+Message: ${message}
+    `,
+    html: `
+      <h3>New Contact Form Message</h3>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong></p>
+      <p>${message}</p>
+    `
+  };
+
+  try {
+    console.log('Attempting to send email...');
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+    res.status(200).json({ message: 'Message sent successfully' });
+  } catch (error) {
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      response: error.response
+    });
+    res.status(500).json({ 
+      message: 'Error sending message',
+      details: error.message 
+    });
   }
 });
 
