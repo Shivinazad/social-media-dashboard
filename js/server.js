@@ -47,6 +47,15 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// Check MongoDB connection
+mongoose.connection.on("connected", () => {
+  console.log("MongoDB connected successfully");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
+
 // Define Schema and Model
 const analyticsSchema = new mongoose.Schema({
   balance: Number,
@@ -174,4 +183,6 @@ app.delete("/tasks/:id", async (req, res) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log("MongoDB connection state:", mongoose.connection.readyState);
+  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
 });

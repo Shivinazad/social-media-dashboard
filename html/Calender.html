@@ -9,11 +9,12 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+    <script src="../js/server.js"></script>
     <link rel="stylesheet" href="../css/Calender.css" />
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
   </head>
   <body>
-    <h1 style="text-align: center; color: #ff9a8b">📅 Smart Event Planner</h1>
+    <h1 style="text-align: center; color: #ff9a8b">📅 Calender</h1>
 
     <div id="calendar"></div>
 
@@ -95,37 +96,39 @@
         const events = getSavedEvents();
 
         if (currentEvent) {
-          const index = events.findIndex(
-            (e) =>
-              e.title === currentEvent.title &&
-              e.start === currentEvent.startStr
-          );
-          if (index !== -1) {
-            events[index].title = title;
-            events[index].start = date;
+          const eventIndex = events.findIndex((e) => e.id === currentEvent.id);
+          if (eventIndex > -1) {
+            events[eventIndex].title = title;
+            events[eventIndex].start = date;
+            events[eventIndex].end = date;
             currentEvent.remove();
-            calendar.addEvent(events[index]);
           }
         } else {
-          const newEvent = { title, start: date, color: "#ff3366" };
+          const newEvent = {
+            id: new Date().getTime(),
+            title,
+            start: date,
+            end: date,
+            color: "#ff3366",
+          };
           events.push(newEvent);
-          calendar.addEvent(newEvent);
         }
 
         saveEvents(events);
+
+        // Refresh events on the calendar
+        const updatedEvents = getSavedEvents();
+        calendar.removeAllEvents();
+        updatedEvents.forEach((event) => calendar.addEvent(event));
+
         modal.style.display = "none";
       });
 
       deleteBtn.addEventListener("click", () => {
         if (currentEvent) {
-          const events = getSavedEvents().filter(
-            (e) =>
-              !(
-                e.title === currentEvent.title &&
-                e.start === currentEvent.startStr
-              )
-          );
-          saveEvents(events);
+          const events = getSavedEvents();
+          const filteredEvents = events.filter((e) => e.id !== currentEvent.id);
+          saveEvents(filteredEvents);
           currentEvent.remove();
           modal.style.display = "none";
         }
