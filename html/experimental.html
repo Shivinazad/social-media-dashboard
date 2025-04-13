@@ -3,261 +3,330 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reports</title>
-    <link rel="stylesheet" href="../css/experimental.css" />
-    <link rel="icon" href="../assets/NEW_FAVICON.png" />
+    <title>Reports - Platform Wise</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../js/server.js"></script>
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
     <style>
-      body {
-        font-family: "Verdana", Geneva, Tahoma, sans-serif;
-        background-color: #1d1b31;
-        color: white;
-        margin: 0;
-        padding: 20px;
+      * {
+        box-sizing: border-box;
       }
 
-      h1 {
-        font-size: 48px;
-        margin-bottom: 20px;
-        color: #ffffff;
-        text-align: center;
-      }
-
-      .metrics {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 40px;
-      }
-
-      .metric-box {
-        background-color: #2a2840;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        width: 30%;
-      }
-
-      .metric-box h2 {
-        font-size: 24px;
-        margin-bottom: 10px;
-        color: #cccccc;
-      }
-
-      .metric-box p {
-        font-size: 36px;
+      select {
+        background-color: rgba(255, 51, 102, 0.1);
+        border: 1px solid #ff3366;
         color: #ff3366;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 16px;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 0 12px rgba(255, 51, 102, 0.4);
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      select:hover {
+        background-color: rgba(255, 51, 102, 0.2);
+        box-shadow: 0 0 18px rgba(255, 51, 102, 0.6);
+        cursor: pointer;
+      }
+
+      select:focus {
+        box-shadow: 0 0 22px rgba(255, 51, 102, 0.8);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #121212;
+        color: white;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 30px;
+        height: 100vh;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .card {
+        background: #1e1e2f;
+        padding: 20px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card h2 {
+        font-size: 16px;
+        color: #ff3366;
+        margin-bottom: 8px;
+      }
+
+      .card p {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .charts-row {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        gap: 20px;
       }
 
       .chart-container {
-        margin: 40px auto;
-        width: 60%; /* Adjusted width for smaller chart */
-        background-color: #2a2840;
+        background: #1e1e2f;
+        border-radius: 16px;
         padding: 20px;
-        border-radius: 10px;
-        text-align: center;
+        position: relative;
       }
 
-      .recent-reports {
-        margin: 40px auto;
-        width: 80%;
-        background-color: #2a2840;
-        padding: 20px;
-        border-radius: 10px;
+      .timeline-selector {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 10;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        color: white;
+      canvas {
+        width: 100% !important;
+        height: auto !important;
       }
 
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #444;
-      }
+      @media (max-width: 900px) {
+        .metrics-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
 
-      th {
-        color: #ff3366;
-      }
-
-      tr:hover {
-        background-color: #333;
+        .charts-row {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
+
   <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="profile-picture">
-        <img
-          style="
-            height: 100px;
-            border-radius: 100%;
-            width: 100px;
-            margin-top: 100px;
-            object-fit: cover;
-          "
-          src="../assets/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg"
-          alt="Profile Picture"
-        />
-      </div>
-      <div
-        style="
-          margin-top: 20px;
-          margin-bottom: 50px;
-          color: white;
-          font-family: Verdana, Geneva, Tahoma, sans-serif;
-          font-size: 16px;
-        "
-      >
-        <b>User00987</b><br />
-      </div>
-      <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="analytics.html"
-          >Overview</a
-        >
-      </div>
-      <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="experimental.html"
-          >Reports</a
-        >
-      </div>
-      <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="tasks.html"
-          >Tasks</a
-        >
-      </div>
-      <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="revenue.html"
-          >Revenue</a
-        >
-      </div>
-      <div class="sidebar-element">
-        <a
-          style="text-decoration: none; color: white"
-          href="Calender.html"
-          target="_blank"
-          >Calendar</a
-        >
-      </div>
-      <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="settings.html"
-          >Settings</a
-        >
-      </div>
-      <div class="sidebar-element">
+    <div class="dashboard-container main-content">
+      <div class="header">
         <button
-          id="logoutBtn"
-          style="background: none; border: none; color: white; cursor: pointer"
+          onclick="downloadPDF()"
+          style="
+            padding: 8px 16px;
+            border: none;
+            background-color: #ff3366;
+            color: black;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+          "
         >
-          Sign Out
+          Export as PDF
         </button>
-      </div>
-    </div>
-
-    <!-- Reports Container -->
-    <div class="reports-container">
-      <h1>Reports Dashboard</h1>
-
-      <!-- Key Metrics -->
-      <div class="metrics">
-        <div class="metric-box">
-          <h2>Total Reports</h2>
-          <p>120</p>
-        </div>
-        <div class="metric-box">
-          <h2>Pending Reports</h2>
-          <p>15</p>
-        </div>
-        <div class="metric-box">
-          <h2>Completed Reports</h2>
-          <p>105</p>
+        <h1>Platform Reports</h1>
+        <div style="display: flex; gap: 15px">
+          <select id="platformSelector">
+            <option value="instagram">Instagram</option>
+            <option value="facebook">Facebook</option>
+            <option value="linkedin">LinkedIn</option>
+          </select>
         </div>
       </div>
 
-      <!-- Chart -->
-      <div class="chart-container">
-        <canvas id="reportsChart"></canvas>
-      </div>
+      <div class="metrics-row" id="metrics"></div>
 
-      <!-- Recent Reports Table -->
-      <div class="recent-reports">
-        <h2>Recent Reports</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Report Name</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Social Media Performance</td>
-              <td>April 1, 2025</td>
-              <td style="color: green">Completed</td>
-            </tr>
-            <tr>
-              <td>Monthly Engagement</td>
-              <td>March 28, 2025</td>
-              <td style="color: red">Pending</td>
-            </tr>
-            <tr>
-              <td>Ad Campaign Analysis</td>
-              <td>March 25, 2025</td>
-              <td style="color: green">Completed</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="charts-row">
+        <div class="chart-container">
+          <div class="timeline-selector">
+            <select id="timeSelector">
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <h2 style="color: #ff3366">Performance Chart</h2>
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h2 style="color: #ff3366">Platform Split</h2>
+          <canvas id="doughnutChart"></canvas>
+        </div>
       </div>
     </div>
 
     <script>
-      // Data for the chart
-      const chartData = {
-        labels: ["Completed", "Pending"], // Labels for the chart
-        datasets: [
-          {
-            label: "Reports Status",
-            data: [105, 15], // Data for completed and pending reports
-            backgroundColor: [
-              "rgba(75, 192, 192, 0.8)",
-              "rgba(255, 99, 132, 0.8)",
-            ],
-            borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
-            borderWidth: 1,
-          },
-        ],
-      };
+      const metricContainer = document.getElementById("metrics");
+      const platformSelector = document.getElementById("platformSelector");
+      const timeSelector = document.getElementById("timeSelector");
 
-      // Chart configuration
-      const config = {
-        type: "pie", // Pie chart
-        data: chartData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false, // Ensure the chart fits the container
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                color: "white", // Legend text color
-                font: {
-                  size: 14,
-                  family: "Verdana, Geneva, Tahoma, sans-serif", // Match page font
-                },
-              },
-            },
+      const platformData = {
+        instagram: {
+          metrics: {
+            engagement: "24.5k",
+            followers: "1.2k",
+            reach: "78.9k",
+            campaigns: "6 Active",
+          },
+          line: {
+            weekly: [1200, 1900, 3000, 2500, 3200, 2800, 3500],
+            monthly: [8000, 9500, 10200, 11500],
+            yearly: [95000, 110000, 120000],
+          },
+          doughnut: {
+            weekly: [40, 30, 30],
+            monthly: [38, 32, 30],
+            yearly: [36, 34, 30],
+          },
+        },
+        facebook: {
+          metrics: {
+            engagement: "18.3k",
+            followers: "900",
+            reach: "65.2k",
+            campaigns: "4 Active",
+          },
+          line: {
+            weekly: [800, 1500, 2100, 1800, 2400, 2000, 2600],
+            monthly: [6500, 7100, 7800, 8300],
+            yearly: [72000, 85000, 91000],
+          },
+          doughnut: {
+            weekly: [35, 35, 30],
+            monthly: [32, 37, 31],
+            yearly: [30, 40, 30],
+          },
+        },
+        linkedin: {
+          metrics: {
+            engagement: "6.2k",
+            followers: "300",
+            reach: "29.3k",
+            campaigns: "2 Active",
+          },
+          line: {
+            weekly: [200, 300, 500, 400, 600, 550, 700],
+            monthly: [1900, 2300, 2600, 2800],
+            yearly: [21000, 25000, 30000],
+          },
+          doughnut: {
+            weekly: [25, 30, 45],
+            monthly: [20, 30, 50],
+            yearly: [18, 32, 50],
           },
         },
       };
 
-      // Render the chart
-      const ctx = document.getElementById("reportsChart").getContext("2d");
-      const reportsChart = new Chart(ctx, config);
+      const renderMetrics = (data) => {
+        metricContainer.innerHTML = `
+        <div class="card"><h2>Total Engagement</h2><p>${data.engagement}</p></div>
+        <div class="card"><h2>New Followers</h2><p>${data.followers}</p></div>
+        <div class="card"><h2>Post Reach</h2><p>${data.reach}</p></div>
+        <div class="card"><h2>Campaigns</h2><p>${data.campaigns}</p></div>
+      `;
+      };
+
+      const lineCtx = document.getElementById("lineChart").getContext("2d");
+      const doughnutCtx = document
+        .getElementById("doughnutChart")
+        .getContext("2d");
+
+      const lineChart = new Chart(lineCtx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Engagement",
+              data: [],
+              borderColor: "#ff3366",
+              backgroundColor: "rgba(255, 51, 102, 0.1)",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: "white" } } },
+          scales: {
+            x: { ticks: { color: "white" }, grid: { color: "#333" } },
+            y: { ticks: { color: "white" }, grid: { color: "#333" } },
+          },
+        },
+      });
+
+      const doughnutChart = new Chart(doughnutCtx, {
+        type: "doughnut",
+        data: {
+          labels: ["Instagram", "Facebook", "LinkedIn"],
+          datasets: [
+            {
+              label: "Platform Split",
+              data: [],
+              backgroundColor: ["#ff3366", "#ff668c", "#ff99b3"],
+              borderColor: "#121212",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: "white" } } },
+        },
+      });
+
+      const updateDashboard = () => {
+        const platform = platformSelector.value;
+        const timeRange = timeSelector.value;
+        const data = platformData[platform];
+
+        renderMetrics(data.metrics);
+        lineChart.data.datasets[0].data = data.line[timeRange];
+
+        const labelMap = {
+          weekly: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          monthly: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          yearly: ["2022", "2023", "2024"],
+        };
+
+        lineChart.data.labels = labelMap[timeRange];
+        doughnutChart.data.datasets[0].data = data.doughnut[timeRange];
+
+        lineChart.update();
+        doughnutChart.update();
+      };
+
+      platformSelector.addEventListener("change", updateDashboard);
+      timeSelector.addEventListener("change", updateDashboard);
+      updateDashboard();
+
+      function downloadPDF() {
+        const element = document.querySelector(".main-content");
+        const opt = {
+          margin: 0.5,
+          filename: "dashboard_report.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+        html2pdf().from(element).set(opt).save();
+      }
     </script>
   </body>
 </html>
