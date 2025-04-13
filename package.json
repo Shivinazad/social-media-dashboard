@@ -8,7 +8,8 @@
     "express": "^5.1.0",
     "mongoose": "^8.13.2",
     "nodemailer": "^6.10.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "concurrently": "^9.1.2"
   },
   "name": "social-media-dashboard",
   "version": "1.0.0",
@@ -22,7 +23,8 @@
     "seed": "node js/seed.js",
     "dev": "concurrently \"node js/server.js\" \"node js/auth_server.js\" \"node js/seed.js\"",
     "prod": "cross-env NODE_ENV=production concurrently \"node js/server.js\" \"node js/auth_server.js\"",
-    "build": "echo 'No build step needed'"
+    "build": "echo 'No build step needed'",
+    "railway": "concurrently \"node js/server.js\" \"node js/auth_server.js\""
   },
   "repository": {
     "type": "git",
