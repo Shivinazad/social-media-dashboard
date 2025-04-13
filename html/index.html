@@ -233,7 +233,7 @@
         If you have any questions, feel free to contact us!
       </p>
 
-      <form action="submit_form.php" method="post" style="max-width: 600px; margin: 0 auto;">
+      <form id="contactForm" style="max-width: 600px; margin: 0 auto;">
         <div class="input-group">
           <label for="name" style="display: block; font-size: 16px; color: white; margin-bottom: 5px;">Name:</label>
           <input
@@ -269,11 +269,59 @@
 
         <button
           type="submit"
+          id="submitBtn"
           style="background-color: rgb(232, 0, 0); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
         >
           Submit
         </button>
       </form>
+      <div id="formStatus" style="margin-top: 20px; text-align: center; color: white;"></div>
     </section>
+
+    <script>
+      document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+        
+        // Disable submit button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+        formStatus.textContent = 'Sending message...';
+
+        const formData = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          message: document.getElementById('message').value
+        };
+
+        try {
+          const response = await fetch('http://localhost:3001/contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            formStatus.textContent = 'Message sent successfully! We\'ll get back to you soon.';
+            formStatus.style.color = '#4CAF50';
+            document.getElementById('contactForm').reset();
+          } else {
+            formStatus.textContent = 'Failed to send message. Please try again.';
+            formStatus.style.color = '#f44336';
+          }
+        } catch (error) {
+          formStatus.textContent = 'An error occurred. Please try again later.';
+          formStatus.style.color = '#f44336';
+        }
+
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+      });
+    </script>
   </body>
 </html>
