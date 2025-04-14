@@ -7,8 +7,6 @@ npm-debug.log
 .DS_Store
 .vscode
 *.log
-videos/
-assets/
 README.md
 *.md
 .dockerignore
