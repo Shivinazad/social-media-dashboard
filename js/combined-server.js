@@ -244,26 +244,18 @@ app.post("/contact", async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: process.env.GMAIL_USER,
-    subject: `New Contact Form Message from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-    html: `
-      <h3>New Contact Form Message</h3>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Message:</strong></p>
-      <p>${message}</p>
-    `,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Message sent successfully" });
+    // Log the contact form submission for demonstration
+    console.log("Contact form submission:", { name, email, message });
+
+    // For demonstration, we'll just return success without actually sending an email
+    res
+      .status(200)
+      .json({ message: "Message received successfully! (Demo Mode)" });
   } catch (error) {
+    console.error("Error handling contact form:", error);
     res.status(500).json({
-      message: "Error sending message",
+      message: "Error processing your message",
       details: error.message,
     });
   }
