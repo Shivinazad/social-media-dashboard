@@ -15,7 +15,7 @@ RUN npm ci --only=production && \
 COPY js/ ./js/
 COPY html/ ./html/
 COPY css/ ./css/
-COPY models/ ./models/
+
 
 # Set production environment
 ENV NODE_ENV=production
