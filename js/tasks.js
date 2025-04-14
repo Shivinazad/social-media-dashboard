@@ -1,102 +1,122 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Task operations
+async function fetchTasks() {
+  try {
+    const response = await fetch("http://localhost:3000/tasks");
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+    const tasks = await response.json();
+    return tasks;
+  } catch (error) {
+    console.error("Error:", error);
+    return [];
+  }
+}
+
+async function addTask(description) {
+  try {
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ description }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to add task");
+    }
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+    return false;
+  }
+}
+
+async function deleteTask(taskId) {
+  try {
+    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete task");
+    }
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+    return false;
+  }
+}
+
+// DOM operations and event handlers
+document.addEventListener("DOMContentLoaded", async () => {
   const taskInput = document.getElementById("taskInput");
   const addTaskBtn = document.getElementById("addTaskBtn");
   const taskList = document.getElementById("taskList");
 
-  // Load tasks from the backend
-  const loadTasks = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/tasks");
-      const tasks = await response.json();
-      tasks.forEach((task) => {
-        addTaskToList(task.description, task._id); // Pass task ID
-      });
-    } catch (error) {
-      console.error("Error loading tasks:", error);
-    }
-  };
+  // Load initial tasks
+  const tasks = await fetchTasks();
+  tasks.forEach((task) => {
+    const taskElement = createTaskElement(task);
+    taskList.appendChild(taskElement);
+  });
 
-  // Save a task to the backend
-  const saveTask = async (taskText) => {
-    try {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ description: taskText }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save task");
-      }
-
-      const newTask = await response.json();
-      return newTask.task; // Return the newly created task
-    } catch (error) {
-      console.error("Error saving task:", error);
-    }
-  };
-
-  // Function to add a task to the list
-  const addTaskToList = (taskText, taskId) => {
-    const listItem = document.createElement("li");
-
-    const taskTextSpan = document.createElement("span");
-    taskTextSpan.textContent = taskText;
-    listItem.appendChild(taskTextSpan);
-
-    // Add a delete button
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "Delete";
-    deleteBtn.addEventListener("click", async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-          method: "DELETE",
-        });
-
-        if (response.ok) {
-          taskList.removeChild(listItem);
-          console.log("Task deleted successfully");
-        } else {
-          console.error("Failed to delete task");
-        }
-      } catch (error) {
-        console.error("Error deleting task:", error);
-      }
-    });
-
-    listItem.appendChild(deleteBtn);
-    taskList.appendChild(listItem);
-  };
-
-  // Add task button click event
+  // Add task handler
   addTaskBtn.addEventListener("click", async () => {
-    const taskText = taskInput.value.trim();
-    if (!taskText) return;
-
-    try {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ description: taskText }),
-      });
-
-      if (response.ok) {
-        const newTask = await response.json();
-        addTaskToList(taskText, newTask.task._id); // Pass task ID
-        taskInput.value = ""; // Clear the input
-      } else {
-        console.error("Failed to save task");
+    const description = taskInput.value.trim();
+    if (description) {
+      const success = await addTask(description);
+      if (success) {
+        const tasks = await fetchTasks();
+        taskList.innerHTML = "";
+        tasks.forEach((task) => {
+          const taskElement = createTaskElement(task);
+          taskList.appendChild(taskElement);
+        });
+        taskInput.value = "";
       }
-    } catch (error) {
-      console.error("Error saving task:", error);
     }
   });
 
-  // Load tasks on page load
-  loadTasks();
+  // Enter key handler
+  taskInput.addEventListener("keypress", async (e) => {
+    if (e.key === "Enter") {
+      const description = taskInput.value.trim();
+      if (description) {
+        const success = await addTask(description);
+        if (success) {
+          const tasks = await fetchTasks();
+          taskList.innerHTML = "";
+          tasks.forEach((task) => {
+            const taskElement = createTaskElement(task);
+            taskList.appendChild(taskElement);
+          });
+          taskInput.value = "";
+        }
+      }
+    }
+  });
 });
+
+// Create task element
+function createTaskElement(task) {
+  const li = document.createElement("li");
+  li.className = "task-item";
+
+  const taskContent = document.createElement("div");
+  taskContent.className = "task-content";
+  taskContent.textContent = task.description;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-btn";
+  deleteBtn.innerHTML = "&times;";
+  deleteBtn.addEventListener("click", async () => {
+    const success = await deleteTask(task._id);
+    if (success) {
+      li.remove();
+    }
+  });
+
+  li.appendChild(taskContent);
+  li.appendChild(deleteBtn);
+  return li;
+}

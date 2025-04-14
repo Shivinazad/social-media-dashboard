@@ -133,22 +133,37 @@
         <b>User00987</b><br />
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="analytics.html">Overview</a>
+        <a style="text-decoration: none; color: white" href="analytics.html"
+          >Overview</a
+        >
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="experimental.html">Reports</a>
+        <a style="text-decoration: none; color: white" href="experimental.html"
+          >Reports</a
+        >
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="tasks.html">Tasks</a>
+        <a style="text-decoration: none; color: white" href="tasks.html"
+          >Tasks</a
+        >
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="revenue.html">Revenue</a>
+        <a style="text-decoration: none; color: white" href="revenue.html"
+          >Revenue</a
+        >
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="Calender.html" target="_blank">Calendar</a>
+        <a
+          style="text-decoration: none; color: white"
+          href="Calender.html"
+          target="_blank"
+          >Calendar</a
+        >
       </div>
       <div class="sidebar-element">
-        <a style="text-decoration: none; color: white" href="settings.html">Settings</a>
+        <a style="text-decoration: none; color: white" href="settings.html"
+          >Settings</a
+        >
       </div>
       <div class="sidebar-element">
         <button
@@ -167,10 +182,7 @@
       </div>
     </div>
 
-    <div
-      class="notification-panel"
-      id="notificationPanel"
-    >
+    <div class="notification-panel" id="notificationPanel">
       <div class="notification-header">
         <h3>Notifications</h3>
         <button class="clear-all">Clear All</button>
@@ -359,7 +371,7 @@
 
         try {
           // Fetch the user's name from the backend
-          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          const response = await fetch(`http://localhost:3000/user/${userId}`);
           if (!response.ok) {
             throw new Error("Failed to fetch user data");
           }
@@ -388,7 +400,7 @@
 
         try {
           // Fetch the user's name from the backend
-          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          const response = await fetch(`http://localhost:3000/user/${userId}`);
           if (!response.ok) {
             throw new Error("Failed to fetch user data");
           }
@@ -458,7 +470,7 @@
         }
 
         try {
-          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          const response = await fetch(`http://localhost:3000/user/${userId}`);
           if (!response.ok) {
             throw new Error("Failed to fetch user data");
           }
@@ -472,7 +484,7 @@
 
           // Update all sidebar links to include the userId
           document.querySelectorAll(".sidebar-element a").forEach((link) => {
-            const href = new URL(link.href);
+            const href = new URL(link.href, window.location.origin);
             href.searchParams.set("userId", userId);
             link.href = href.toString();
           });
@@ -501,7 +513,7 @@
 
         try {
           // Fetch the user's name from the backend
-          const response = await fetch(`http://localhost:3001/user/${userId}`);
+          const response = await fetch(`http://localhost:3000/user/${userId}`);
           if (!response.ok) {
             throw new Error("Failed to fetch user data");
           }

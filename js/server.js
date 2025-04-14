@@ -7,54 +7,22 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Add support for proxy in production
-app.set("trust proxy", 1);
-
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from the root directory
 app.use(express.static(path.join(__dirname, "../")));
-
-// Root route should serve index.html
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../html/index.html"));
-});
-
-// Handle all routes to serve the corresponding HTML file
-app.get("*", (req, res, next) => {
-  const path_parts = req.path.split("/");
-  const last_part = path_parts[path_parts.length - 1];
-
-  // If it's an API call, let it pass through
-  if (last_part.includes(".") || req.path.startsWith("/api/")) {
-    return next();
-  }
-
-  // Otherwise serve index.html
-  res.sendFile(path.join(__dirname, "../html/index.html"));
-});
 
 // MongoDB Connection
 const MONGODB_URI =
-  process.env.NODE_ENV === "production"
-    ? process.env.MONGODB_URI
-    : "mongodb://127.0.0.1:27017/analyticsDB";
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/dashboard";
 
 mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-// Check MongoDB connection
-mongoose.connection.on("connected", () => {
-  console.log("MongoDB connected successfully");
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
-});
+  .connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    family: 4, // Force IPv4
+  })
+  .then(() => console.log("Main server: Connected to MongoDB"))
+  .catch((err) => console.error("Main server: MongoDB connection error:", err));
 
 // Define Schema and Model
 const analyticsSchema = new mongoose.Schema({
@@ -68,17 +36,26 @@ const analyticsSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-const Analytics = mongoose.model("Analytics", analyticsSchema);
+let Analytics;
+try {
+  Analytics = mongoose.model("Analytics");
+} catch {
+  Analytics = mongoose.model("Analytics", analyticsSchema);
+}
 
-// Task Schema and Model
 const taskSchema = new mongoose.Schema({
   description: String,
   createdAt: { type: Date, default: Date.now },
 });
 
-const Task = mongoose.model("Task", taskSchema);
+let Task;
+try {
+  Task = mongoose.model("Task");
+} catch {
+  Task = mongoose.model("Task", taskSchema);
+}
 
-// Function to generate random analytics data
+// Function to generate mock data
 const generateMockData = () => {
   return {
     balance: Math.floor(Math.random() * 10000) + 1000,
@@ -96,36 +73,26 @@ const generateMockData = () => {
   };
 };
 
-// Ensure the timestamp is correctly set when saving mock data
+// Save mock data with proper error handling
 const saveMockData = async () => {
-  const mockData = generateMockData();
-  mockData.timestamp = new Date(); // Explicitly set the timestamp
-  const analytics = new Analytics(mockData);
-  await analytics.save();
-  console.log("Mock analytics data saved with timestamp:", mockData.timestamp);
+  try {
+    const mockData = generateMockData();
+    mockData.timestamp = new Date();
+    const analytics = new Analytics(mockData);
+    await analytics.save();
+    console.log(
+      "Mock analytics data saved with timestamp:",
+      mockData.timestamp
+    );
+  } catch (error) {
+    console.error("Error saving mock data:", error);
+  }
 };
 
-// Run the mock data generator every 2 minutes
-setInterval(saveMockData, 2 * 60 * 1000); // 2 minutes
+// Run mock data generator every 2 minutes
+setInterval(saveMockData, 2 * 60 * 1000);
 
-// Mock Analytics Data
-const analyticsData = {
-  balance: 4500,
-  facebookShares: 10,
-  instagramFollowers: 27,
-  linkedInViews: 50,
-  engagementRate: 3.75,
-  conversion: "low",
-  analyticsSummary: [
-    "Could do better",
-    "Instagram is still the same",
-    "Marketing budget ++",
-    "Conversion is low",
-  ],
-  timestamp: new Date(), // Add a timestamp field
-};
-
-// Update the /analytics endpoint to fetch the latest data from MongoDB
+// Routes
 app.get("/analytics", async (req, res) => {
   try {
     const latestData = await Analytics.findOne().sort({ timestamp: -1 });
@@ -138,7 +105,7 @@ app.get("/analytics", async (req, res) => {
   }
 });
 
-// Get All Tasks
+// Task Routes
 app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -148,10 +115,8 @@ app.get("/tasks", async (req, res) => {
   }
 });
 
-// Add a New Task
 app.post("/tasks", async (req, res) => {
   const { description } = req.body;
-
   if (!description) {
     return res.status(400).json({ message: "Task description is required" });
   }
@@ -165,10 +130,8 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
-// Delete a Task
 app.delete("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
     const deletedTask = await Task.findByIdAndDelete(id);
     if (!deletedTask) {
@@ -180,9 +143,12 @@ app.delete("/tasks/:id", async (req, res) => {
   }
 });
 
+// Serve HTML files
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log("MongoDB connection state:", mongoose.connection.readyState);
-  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+  console.log(`Main server running on http://localhost:${PORT}`);
 });

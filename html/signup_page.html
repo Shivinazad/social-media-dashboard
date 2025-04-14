@@ -104,7 +104,6 @@
       <div class="loader"></div>
     </div>
 
-    <script src="../js/auth_server.js"></script>
     <script>
       document
         .getElementById("signupForm")
@@ -120,8 +119,7 @@
             // Show the loading animation
             loadingOverlay.classList.add("active");
 
-            const response = await fetch("http://localhost:3001/signup", {
-              // Change to 3001
+            const response = await fetch("http://localhost:3000/signup", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -159,7 +157,7 @@
             // Show the loading bar
             loadingOverlay.classList.add("active");
 
-            const response = await fetch("http://localhost:3000/login", {
+            const response = await fetch("http://localhost:3001/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

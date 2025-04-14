@@ -4,7 +4,5 @@ const getApiUrl = () => {
   return isProd ? window.location.origin : "http://localhost:3000";
 };
 
-const getAuthApiUrl = () => {
-  const isProd = window.location.hostname !== "localhost";
-  return isProd ? window.location.origin : "http://localhost:3001";
-};
+// Since we're using combined server, auth API is on the same port
+const getAuthApiUrl = () => getApiUrl();

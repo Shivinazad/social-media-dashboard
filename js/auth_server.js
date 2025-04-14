@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.AUTH_PORT || 3001;
 
 // Add support for proxy in production
 app.set("trust proxy", 1);
@@ -41,14 +41,15 @@ app.get("*", (req, res, next) => {
 
 // MongoDB Connection
 const MONGODB_URI =
-  process.env.NODE_ENV === "production"
-    ? process.env.MONGODB_URI
-    : "mongodb://127.0.0.1:27017/authDB";
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/dashboard";
 
 mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    family: 4, // Force IPv4
+  })
+  .then(() => console.log("Auth server: Connected to MongoDB"))
+  .catch((err) => console.error("Auth server: MongoDB connection error:", err));
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -75,7 +76,12 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
-const User = mongoose.model("User", userSchema);
+let User;
+try {
+  User = mongoose.model("User");
+} catch {
+  User = mongoose.model("User", userSchema);
+}
 
 // Signup Route
 app.post("/signup", async (req, res) => {
@@ -185,5 +191,5 @@ Message: ${message}
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Auth server running on http://localhost:${PORT}`);
 });

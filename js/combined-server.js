@@ -1,4 +1,4 @@
- require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -17,6 +17,11 @@ app.set("trust proxy", 1);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "../")));
+
+// Serve HTML files
+app.get("*.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html", req.path));
+});
 
 // MongoDB Connection
 const MONGODB_URI =
@@ -42,6 +47,46 @@ const analyticsSchema = new mongoose.Schema({
 });
 
 const Analytics = mongoose.model("Analytics", analyticsSchema);
+
+// Function to generate mock data
+const generateMockData = () => {
+  return {
+    balance: Math.floor(Math.random() * 10000) + 1000,
+    facebookShares: Math.floor(Math.random() * 100),
+    instagramFollowers: Math.floor(Math.random() * 100),
+    linkedInViews: Math.floor(Math.random() * 100),
+    engagementRate: (Math.random() * 10).toFixed(2),
+    conversion: Math.random() > 0.5 ? "high" : "low",
+    analyticsSummary: [
+      "Could do better",
+      "Instagram is still the same",
+      "Marketing budget ++",
+      "Conversion is low",
+    ],
+    timestamp: new Date(),
+  };
+};
+
+// Save mock data with proper error handling
+const saveMockData = async () => {
+  try {
+    const mockData = generateMockData();
+    const analytics = new Analytics(mockData);
+    await analytics.save();
+    console.log(
+      "Mock analytics data saved with timestamp:",
+      mockData.timestamp
+    );
+  } catch (error) {
+    console.error("Error saving mock data:", error);
+  }
+};
+
+// Run mock data generator every 2 minutes
+setInterval(saveMockData, 2 * 60 * 1000);
+
+// Generate initial data
+saveMockData();
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -109,25 +154,31 @@ app.post("/signup", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log("Login attempt for email:", email);
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found for email:", email);
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
+    console.log("User found, verifying password");
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log("Invalid password for email:", email);
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
+    console.log("Login successful for user:", user.name);
     res.status(200).json({
       message: "Login successful",
       name: user.name,
       userId: user._id,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error logging in", error });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
 });
 
