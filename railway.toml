@@ -1,10 +1,16 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
+watchPatterns = ["js/**", "html/**", "css/**", "models/**"]
 
 [deploy]
 startCommand = "npm start"
 restartPolicyType = "ON_FAILURE"
-healthcheckPath = "/"
-healthcheckTimeout = 300
+healthcheckPath = "/health"
+healthcheckTimeout = 100
 numReplicas = 1
+restartPolicyMaxRetries = 5
+
+[service]
+name = "social-media-dashboard"
+optimize-for = "web"
