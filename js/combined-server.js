@@ -10,12 +10,24 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Add support for proxy in production
+// Production configurations
 app.set("trust proxy", 1);
 
-// Middleware
-app.use(cors());
+// Middleware with CORS configuration for production
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.ALLOWED_ORIGINS || "*"
+        : "*",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json());
+
+// Serve static files - configure for production
 app.use(express.static(path.join(__dirname, "../")));
 
 // Serve HTML files
@@ -23,16 +35,30 @@ app.get("*.html", (req, res) => {
   res.sendFile(path.join(__dirname, "../html", req.path));
 });
 
-// MongoDB Connection
-const MONGODB_URI =
-  process.env.NODE_ENV === "production"
-    ? process.env.MONGODB_URI
-    : "mongodb://127.0.0.1:27017/dashboard";
+// MongoDB Connection with retry logic
+const connectWithRetry = async () => {
+  const MONGODB_URI =
+    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/dashboard";
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      // Handle MongoDB replica set
+      ...(process.env.NODE_ENV === "production" && {
+        retryWrites: true,
+        w: "majority",
+      }),
+    });
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    console.log("Retrying in 5 seconds...");
+    setTimeout(connectWithRetry, 5000);
+  }
+};
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+connectWithRetry();
 
 // Define Schemas and Models
 const analyticsSchema = new mongoose.Schema({
@@ -103,14 +129,25 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model("Task", taskSchema);
 
-// Configure email transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+// Configure email transporter with error handling
+const configureEmailTransporter = () => {
+  if (process.env.NODE_ENV === "production" && !process.env.GMAIL_USER) {
+    console.warn(
+      "Email configuration missing - email features will be disabled"
+    );
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+};
+
+const transporter = configureEmailTransporter();
 
 // Root route should serve index.html
 app.get("/", (req, res) => {
@@ -261,6 +298,15 @@ app.post("/contact", async (req, res) => {
   }
 });
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 // Handle all other routes to serve the corresponding HTML file
 app.get("*", (req, res, next) => {
   const path_parts = req.path.split("/");
@@ -275,7 +321,35 @@ app.get("*", (req, res, next) => {
   res.sendFile(path.join(__dirname, "../html/index.html"));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Production-ready error handler
+const errorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : err.message,
+  });
+};
+
+app.use(errorHandler);
+
+// Start server with graceful shutdown
+const server = app.listen(PORT, () => {
+  console.log(
+    `Server running in ${
+      process.env.NODE_ENV || "development"
+    } mode on port ${PORT}`
+  );
+});
+
+process.on("SIGTERM", () => {
+  console.info("SIGTERM signal received. Closing HTTP server...");
+  server.close(() => {
+    console.log("HTTP server closed");
+    mongoose.connection.close(false, () => {
+      console.log("MongoDB connection closed");
+      process.exit(0);
+    });
+  });
 });

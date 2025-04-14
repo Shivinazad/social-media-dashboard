@@ -19,7 +19,8 @@
   "scripts": {
     "start": "node js/combined-server.js",
     "dev": "concurrently \"nodemon js/server.js\" \"nodemon js/auth_server.js\" \"node js/seed.js\"",
-    "build": "echo 'No build step needed'"
+    "build": "echo 'No build step needed'",
+    "seed": "node js/seed.js"
   },
   "repository": {
     "type": "git",

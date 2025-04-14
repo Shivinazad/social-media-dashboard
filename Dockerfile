@@ -2,12 +2,17 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# First install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production
 
+# Copy source code
 COPY . .
 
-EXPOSE 3000
-EXPOSE 3001
+# Set production environment
+ENV NODE_ENV=production
 
-CMD ["npm", "run", "railway"]
+# Only expose one port since we're using combined server
+EXPOSE 3000
+
+CMD ["npm", "start"]

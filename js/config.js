@@ -6,3 +6,9 @@ const getApiUrl = () => {
 
 // Since we're using combined server, auth API is on the same port
 const getAuthApiUrl = () => getApiUrl();
+
+// Export the configuration
+module.exports = {
+  getApiUrl,
+  getAuthApiUrl,
+};
