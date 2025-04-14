@@ -1,7 +1,9 @@
 // Task operations
 async function fetchTasks() {
   try {
-    const response = await fetch("http://localhost:3000/tasks");
+    const response = await fetch(
+      "https://social-media-dashboard-eu4r.onrender.com/tasks"
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
     }
@@ -15,13 +17,16 @@ async function fetchTasks() {
 
 async function addTask(description) {
   try {
-    const response = await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ description }),
-    });
+    const response = await fetch(
+      "https://social-media-dashboard-eu4r.onrender.com/tasks",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ description }),
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to add task");
     }
@@ -34,9 +39,12 @@ async function addTask(description) {
 
 async function deleteTask(taskId) {
   try {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `https://social-media-dashboard-eu4r.onrender.com/tasks/${taskId}`,
+      {
+        method: "DELETE",
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to delete task");
     }

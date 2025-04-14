@@ -112,13 +112,16 @@
             loadingOverlay.classList.add("active");
 
             console.log("Attempting to login with:", { email });
-            const response = await fetch("http://localhost:3000/login", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ email, password }),
-            });
+            const response = await fetch(
+              "https://social-media-dashboard-eu4r.onrender.com/login",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+              }
+            );
 
             console.log("Login response status:", response.status);
             const data = await response.json();
