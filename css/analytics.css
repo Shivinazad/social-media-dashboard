@@ -4,17 +4,18 @@
   align-items: center;
   width: 280px;
   height: 100vh;
-  background-color: #ff3366;
+  background-color: #3f51b5; /* Changed from pink to indigo blue */
   font-family: Arial, Helvetica, sans-serif;
   font-size: 23px;
   position: fixed;
   z-index: 1001; /* Ensure sidebar stays on top */
 }
 
+/* Update text color to ensure visibility against lighter background */
 .sidebar-element {
   display: block;
   margin-bottom: 15px;
-  color: white;
+  color: #333; /* Changed from white to darker color for better contrast */
   cursor: pointer;
 }
 
@@ -32,7 +33,7 @@
   height: 70px;
   width: calc(1200px + 320px + 40px + 280px); /* Width includes sidebar */
   background-color: rgba(8, 16, 23, 0.171);
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 28px;
@@ -175,10 +176,14 @@
 .loader {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #ff6f61, #ff9a8b);
+  background: linear-gradient(
+    135deg,
+    #3f51b5,
+    #7986cb
+  ); /* Changed from pink gradient to indigo blue gradient */
   border-radius: 50%;
   animation: pulse 1.5s infinite ease-in-out;
-  box-shadow: 0 0 20px rgba(255, 111, 97, 0.6), 0 0 40px rgba(255, 111, 97, 0.4);
+  box-shadow: 0 0 20px rgba(63, 81, 181, 0.6), 0 0 40px rgba(63, 81, 181, 0.4); /* Updated shadow color to match new blue */
 }
 
 @keyframes pulse {
@@ -258,7 +263,7 @@ button:active {
   align-items: center;
   gap: 8px;
   cursor: move;
-  color: #ffd1dc; /* Match theme color */
+  color: #3f51b5; /* Changed from pink to indigo blue */
   font-weight: bold;
 }
 
@@ -297,7 +302,7 @@ button:active {
 
 .feed-item.new {
   background-color: #313150;
-  border-left: 3px solid #ff3366; /* Highlight new items */
+  border-left: 3px solid #3f51b5; /* Changed from pink to indigo blue */
 }
 
 .platform-info {
@@ -314,7 +319,7 @@ button:active {
 
 .platform-name {
   font-weight: bold;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
 }
 
 .feed-message {
@@ -402,7 +407,7 @@ button:active {
 .notification-title {
   font-weight: bold;
   margin-bottom: 5px;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
 }
 
 .notification-message {
@@ -435,7 +440,7 @@ button:active {
 }
 
 .notification-settings h3 {
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   margin-bottom: 10px;
 }
 
@@ -481,7 +486,7 @@ button:active {
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 24px;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   z-index: 1000;
 }
 
@@ -489,7 +494,7 @@ button:active {
   position: absolute;
   top: -8px;
   right: -8px;
-  background-color: #ff3366;
+  background-color: #3f51b5; /* Changed from pink to indigo blue */
   color: white;
   border-radius: 50%;
   padding: 2px 6px;
@@ -507,7 +512,7 @@ button:active {
   padding: 30px 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   font-size: 14px;
   z-index: 1000;
   width: 300px; /* Same width as live feed */
@@ -553,7 +558,7 @@ button:active {
 
 .notification-header h3 {
   margin: 0;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   font-size: 18px;
   font-weight: 600;
 }
@@ -599,7 +604,7 @@ button:active {
 .notification-title {
   font-size: 16px;
   font-weight: 600;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   margin-bottom: 6px;
 }
 
@@ -673,7 +678,7 @@ body {
 }
 
 .clear-all:hover {
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -682,14 +687,19 @@ body {
   background-color: transparent;
   border: 1px solid #666;
   border-radius: 4px;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   font-size: 13px;
   transition: all 0.2s ease;
 }
 
 .clear-all:hover {
-  background-color: rgba(255, 209, 220, 0.1);
-  border-color: #ffd1dc;
+  background-color: rgba(
+    63,
+    81,
+    181,
+    0.1
+  ); /* Changed from pink to indigo blue rgba */
+  border-color: #3f51b5; /* Changed from pink to indigo blue */
 }
 
 #notificationContainer {
@@ -747,7 +757,7 @@ body {
 #notificationContainer .notification-title {
   font-size: 16px;
   font-weight: 600;
-  color: #ffd1dc;
+  color: #3f51b5; /* Changed from pink to indigo blue */
   margin-bottom: 6px;
 }
 
@@ -781,7 +791,9 @@ body {
 
 #notificationContainer .notification-title {
   font-size: 16px;
-  margin-bottom: 8px;
+  font-weight: 600;
+  color: #3f51b5; /* Changed from pink to indigo blue */
+  margin-bottom: 6px;
 }
 
 #notificationContainer .notification-message {

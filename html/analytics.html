@@ -73,11 +73,15 @@
       .loader {
         width: 100px; /* Increased size */
         height: 100px; /* Increased size */
-        background: linear-gradient(135deg, #ff6f61, #ff9a8b);
+        background: linear-gradient(
+          135deg,
+          #3f51b5,
+          #7986cb
+        ); /* Changed to indigo blue gradient */
         border-radius: 50%;
         animation: pulse 1.5s infinite ease-in-out;
-        box-shadow: 0 0 20px rgba(255, 111, 97, 0.6),
-          0 0 40px rgba(255, 111, 97, 0.4);
+        box-shadow: 0 0 20px rgba(63, 81, 181, 0.6),
+          0 0 40px rgba(63, 81, 181, 0.4); /* Updated shadow color to match new blue */
       }
 
       @keyframes pulse {
@@ -93,6 +97,16 @@
           transform: scale(1);
           opacity: 1;
         }
+      }
+      .overview-text {
+        font-size: 70px;
+        background: linear-gradient(to top, white, #3f51b5);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 10px rgba(63, 81, 181, 0.3),
+          0 0 20px rgba(63, 81, 181, 0.2), 0 0 30px rgba(63, 81, 181, 0.1);
+        display: block;
       }
     </style>
     <!-- Add Font Awesome for the bell icon -->
@@ -204,7 +218,9 @@
         LinkedIn Views:
         <div id="linkedInViews" style="font-size: 38px; color: green">0%</div>
       </div>
-      <div class="box chart" style="font-size: 70px">OVERVIEW</div>
+      <div class="box chart">
+        <span class="overview-text">OVERVIEW</span>
+      </div>
       <div class="box analytics" style="display: block; padding-top: 50px">
         Analytics Summary:
         <hr />

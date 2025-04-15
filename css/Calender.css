@@ -13,13 +13,13 @@ body {
   width: 40px;
   height: 40px;
   background-color: rgba(30, 30, 46, 0.8);
-  border: 1px solid #ff3366;
+  border: 1px solid #3f51b5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #ff3366;
+  color: #3f51b5;
   font-size: 20px;
   box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
   z-index: 1040;
@@ -48,31 +48,31 @@ body {
   color: white;
 }
 .fc-toolbar-title {
-  color: #ffd1dc;
+  color: #3f51b5;
 }
 .fc-button {
-  background-color: #ff3366 !important;
+  background-color: #3f51b5 !important;
   border: none !important;
   color: white !important;
 }
 .fc-button:hover {
-  background-color: #e82e5c !important;
+  background-color: #3f51b5 !important;
 }
 .fc-col-header-cell {
   background-color: #282a36;
 }
 .fc-col-header-cell-cushion {
-  color: #ff9a8b !important;
+  color: #3f51b5 !important;
 }
 .fc-daygrid-day {
   background-color: #1e1e2e;
   border: 1px solid #444;
 }
 .fc-daygrid-day-number {
-  color: #ffd1dc;
+  color: #3f51b5;
 }
 .fc-event {
-  background-color: #ff3366 !important;
+  background-color: #3f51b5 !important;
   border: none;
   color: white;
   font-size: 14px;
@@ -96,7 +96,7 @@ body {
   border-radius: 10px;
   width: 300px;
   color: white;
-  border: 1px solid #ff6699;
+  border: 1px solid #3f51b5;
 }
 .modal-content input {
   width: 100%;
@@ -108,7 +108,7 @@ body {
   border-radius: 5px;
 }
 .modal-content button {
-  background-color: #ff3366;
+  background-color: #3f51b5;
   border: none;
   padding: 10px;
   color: white;
@@ -118,11 +118,19 @@ body {
   cursor: pointer;
 }
 .modal-content button:hover {
-  background-color: #e82e5c;
+  background-color: #3f51b5;
 }
 .delete-btn {
   background-color: #444;
 }
 .delete-btn:hover {
-  background-color: #ff5555;
+  background-color: #3f51b5;
+}
+
+.navbar {
+  color: #3f51b5; /* Changed from pink to indigo blue */
+}
+
+.sidebar-element {
+  color: #3f51b5; /* Changed from pink to indigo blue */
 }

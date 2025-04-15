@@ -81,7 +81,7 @@ body {
 
 /* Login Button */
 .btn-login {
-  background: linear-gradient(135deg, #ff3366, #ff6699);
+  background: linear-gradient(135deg, #3f51b5, #ff6699);
   border: none;
   border-radius: 25px;
   padding: 12px 20px;
@@ -94,7 +94,7 @@ body {
 }
 
 .btn-login:hover {
-  background: linear-gradient(135deg, #ff6699, #ff3366);
+  background: linear-gradient(135deg, #ff6699, #3f51b5);
   box-shadow: 0 4px 10px rgba(255, 51, 102, 0.5);
 }
 

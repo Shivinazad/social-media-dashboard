@@ -13,26 +13,36 @@
       }
 
       select {
-        background-color: rgba(255, 51, 102, 0.1);
-        border: 1px solid #ff3366;
-        color: #ff3366;
+        background-color: rgba(
+          63,
+          81,
+          181,
+          0.1
+        ); /* Changed from pink to indigo blue */
+        border: 1px solid #3f51b5;
+        color: #3f51b5;
         padding: 8px 12px;
         border-radius: 12px;
         font-size: 16px;
         backdrop-filter: blur(6px);
-        box-shadow: 0 0 12px rgba(255, 51, 102, 0.4);
+        box-shadow: 0 0 12px rgba(63, 81, 181, 0.4); /* Changed from pink to indigo blue */
         outline: none;
         transition: all 0.3s ease;
       }
 
       select:hover {
-        background-color: rgba(255, 51, 102, 0.2);
-        box-shadow: 0 0 18px rgba(255, 51, 102, 0.6);
+        background-color: rgba(
+          63,
+          81,
+          181,
+          0.2
+        ); /* Changed from pink to indigo blue */
+        box-shadow: 0 0 18px rgba(63, 81, 181, 0.6); /* Changed from pink to indigo blue */
         cursor: pointer;
       }
 
       select:focus {
-        box-shadow: 0 0 22px rgba(255, 51, 102, 0.8);
+        box-shadow: 0 0 22px rgba(63, 81, 181, 0.8); /* Changed from pink to indigo blue */
       }
 
       body {
@@ -76,7 +86,7 @@
 
       .card h2 {
         font-size: 16px;
-        color: #ff3366;
+        color: #3f51b5;
         margin-bottom: 8px;
       }
 
@@ -132,23 +142,28 @@
         width: 40px;
         height: 40px;
         background-color: rgba(30, 30, 46, 0.8);
-        border: 1px solid #ff3366;
+        border: 1px solid #3f51b5;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        color: #ff3366;
+        color: #3f51b5;
         font-size: 20px;
-        box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+        box-shadow: 0 0 15px rgba(63, 81, 181, 0.3); /* Changed from pink to indigo blue */
         z-index: 1040;
         transition: all 0.3s ease;
       }
 
       .back-button:hover {
-        background-color: rgba(255, 51, 102, 0.2);
+        background-color: rgba(
+          63,
+          81,
+          181,
+          0.2
+        ); /* Changed from pink to indigo blue */
         transform: translateX(-3px);
-        box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+        box-shadow: 0 0 20px rgba(63, 81, 181, 0.5); /* Changed from pink to indigo blue */
       }
 
       .back-button:active {
@@ -168,7 +183,7 @@
           style="
             padding: 8px 16px;
             border: none;
-            background-color: #ff3366;
+            background-color: #3f51b5;
             color: black;
             font-weight: bold;
             border-radius: 8px;
@@ -198,11 +213,11 @@
               <option value="yearly">Yearly</option>
             </select>
           </div>
-          <h2 style="color: #ff3366">Performance Chart</h2>
+          <h2 style="color: #3f51b5">Performance Chart</h2>
           <canvas id="lineChart"></canvas>
         </div>
         <div class="chart-container">
-          <h2 style="color: #ff3366">Platform Split</h2>
+          <h2 style="color: #3f51b5">Platform Split</h2>
           <canvas id="doughnutChart"></canvas>
         </div>
       </div>
@@ -292,8 +307,8 @@
             {
               label: "Engagement",
               data: [],
-              borderColor: "#ff3366",
-              backgroundColor: "rgba(255, 51, 102, 0.1)",
+              borderColor: "#3F51B5",
+              backgroundColor: "rgba(63, 81, 181, 0.1)", // Updated to match indigo blue
               fill: true,
               tension: 0.4,
             },
@@ -317,7 +332,7 @@
             {
               label: "Platform Split",
               data: [],
-              backgroundColor: ["#ff3366", "#ff668c", "#ff99b3"],
+              backgroundColor: ["#3F51B5", "#7986CB", "#C5CAE9"], // Updated to indigo blue and lighter shades
               borderColor: "#121212",
             },
           ],
