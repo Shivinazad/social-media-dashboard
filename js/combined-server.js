@@ -82,7 +82,7 @@ const generateMockData = () => {
     instagramFollowers: Math.floor(Math.random() * 100),
     linkedInViews: Math.floor(Math.random() * 100),
     engagementRate: (Math.random() * 10).toFixed(2),
-    conversion: Math.random() > 0.5 ? "high" : "low",
+    conversion: Math.random() > 0.5 ? "High" : "Low",
     analyticsSummary: [
       "Could do better",
       "Instagram is still the same",

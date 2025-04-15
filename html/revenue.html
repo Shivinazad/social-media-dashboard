@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Revenue</title>
+    <title>Moonbox - Revenue</title>
     <link rel="stylesheet" href="../css/revenue.css" />
 
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
@@ -61,7 +61,7 @@
         <a
           style="text-decoration: none; color: white"
           href="Calender.html"
-          target="_blank"
+          target="_self"
           >Calendar</a
         >
       </div>
@@ -269,6 +269,17 @@
       document.getElementById("logoutBtn").addEventListener("click", () => {
         window.location.href = "login_page.html"; // Redirect to login page
       });
+
+      // Function to handle back button navigation
+      function goBack() {
+        // Check if there's a previous page in history
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // If opened directly or in a new tab, redirect to analytics page
+          window.location.href = "analytics.html";
+        }
+      }
     </script>
   </body>
 </html>

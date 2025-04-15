@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analytics</title>
+    <title>Moonbox - Analytics</title>
     <link rel="stylesheet" href="../css/analytics.css" />
 
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
@@ -87,7 +87,7 @@
         }
         50% {
           transform: scale(1.2);
-          opacity: 0.8;
+          opacity: (0.8);
         }
         100% {
           transform: scale(1);
@@ -153,10 +153,7 @@
         >
       </div>
       <div class="sidebar-element">
-        <a
-          style="text-decoration: none; color: white"
-          href="Calender.html"
-          target="_blank"
+        <a style="text-decoration: none; color: white" href="Calender.html"
           >Calendar</a
         >
       </div>
@@ -209,21 +206,20 @@
       </div>
       <div class="box chart" style="font-size: 70px">OVERVIEW</div>
       <div class="box analytics" style="display: block; padding-top: 50px">
-        Analytics Summary :
+        Analytics Summary:
         <hr />
         <div>Could do better</div>
         <br />
         <!-- <hr /> -->
-        <div>Instagram is still same</div>
+        <div>Instagram is still the same</div>
         <br />
         <!-- <hr /> -->
-        <div>marketing budgdet ++</div>
+        <div>Marketing budget ++</div>
         <br />
         <!-- <hr /> -->
         <div>Conversion is low</div>
         <br />
         <!-- <hr /> -->
-        <div>Could do better</div>
       </div>
       <div class="box growth" style="display: block; padding-top: 50px">
         Engagement rate
@@ -231,7 +227,7 @@
       </div>
       <div class="box stats" style="display: block; padding-top: 50px">
         Conversion :
-        <div id="conversion" style="font-size: 38px; color: red">low</div>
+        <div id="conversion" style="font-size: 38px; color: red">Low</div>
       </div>
     </div>
 
@@ -452,7 +448,8 @@
             data.engagementRate;
 
           // Update Conversion
-          document.getElementById("conversion").textContent = data.conversion;
+          document.getElementById("conversion").textContent =
+            data.conversion.charAt(0).toUpperCase() + data.conversion.slice(1);
 
           // Update Last Synced
           const lastSyncedTime = new Date(data.timestamp); // Timestamp from backend
@@ -559,7 +556,8 @@
           document.getElementById("engagementRate").textContent =
             analyticsData.engagementRate;
           document.getElementById("conversion").textContent =
-            analyticsData.conversion;
+            analyticsData.conversion.charAt(0).toUpperCase() +
+            analyticsData.conversion.slice(1);
 
           // Simulate a smooth transition delay (same as login/signup)
           setTimeout(() => {

@@ -4,6 +4,38 @@ body {
   color: white;
   padding: 20px;
 }
+
+/* Back button styles */
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(30, 30, 46, 0.8);
+  border: 1px solid #ff3366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ff3366;
+  font-size: 20px;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+  z-index: 1040;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 51, 102, 0.2);
+  transform: translateX(-3px);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
 #calendar {
   max-width: 900px;
   margin: 0 auto;

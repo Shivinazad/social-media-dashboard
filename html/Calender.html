@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendar</title>
+    <title>Moonbox - Calendar</title>
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
     <link
       href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css"
@@ -15,6 +15,9 @@
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
   </head>
   <body>
+    <!-- Back button -->
+    <div class="back-button" onclick="goBack()">←</div>
+
     <h1 style="text-align: center; color: #ff9a8b">📅 Calender</h1>
 
     <div id="calendar"></div>
@@ -138,6 +141,17 @@
       window.onclick = (e) => {
         if (e.target === modal) modal.style.display = "none";
       };
+
+      // Improved function to handle back button navigation
+      function goBack() {
+        // Check if there's a previous page in history
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // If opened directly or in a new tab, redirect to analytics page
+          window.location.href = "analytics.html";
+        }
+      }
     </script>
   </body>
 </html>

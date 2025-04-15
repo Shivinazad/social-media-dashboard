@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reports</title>
+    <title>Moonbox - Reports</title>
     <link rel="icon" href="../assets/NEW_FAVICON.png" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
@@ -55,6 +55,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding-left: 80px; /* Increased to provide space for back button */
+        margin-top: 10px; /* Added margin to ensure content doesn't overlap with back button */
       }
 
       .metrics-row {
@@ -121,10 +123,44 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* Back button styles */
+      .back-button {
+        position: fixed;
+        top: 20px;
+        left: 20px; /* Positioned further left to avoid overlap */
+        width: 40px;
+        height: 40px;
+        background-color: rgba(30, 30, 46, 0.8);
+        border: 1px solid #ff3366;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ff3366;
+        font-size: 20px;
+        box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+        z-index: 1040;
+        transition: all 0.3s ease;
+      }
+
+      .back-button:hover {
+        background-color: rgba(255, 51, 102, 0.2);
+        transform: translateX(-3px);
+        box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+      }
+
+      .back-button:active {
+        transform: scale(0.95);
+      }
     </style>
   </head>
 
   <body>
+    <!-- Back button -->
+    <div class="back-button" onclick="goBack()">←</div>
+
     <div class="dashboard-container main-content">
       <div class="header">
         <button
@@ -327,6 +363,16 @@
           jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
         };
         html2pdf().from(element).set(opt).save();
+      }
+
+      function goBack() {
+        // Check if there's a previous page in history
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // If opened directly or in a new tab, redirect to analytics page
+          window.location.href = "analytics.html";
+        }
       }
     </script>
   </body>
